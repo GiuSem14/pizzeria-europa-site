@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
+import { Thermometer, Timer, Flame } from 'lucide-react'
 
 const values = [
   {
@@ -130,12 +131,14 @@ export default function ChiSiamo() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
             {[
-              { emoji: '🌡️', title: '400–500°C', desc: 'Temperatura di cottura' },
-              { emoji: '⏱️', title: '60–90 sec', desc: 'Tempo di cottura perfetto' },
-              { emoji: '🪵', title: 'Legna selezionata', desc: 'Per un aroma autentico' },
-            ].map(({ emoji, title, desc }) => (
+              { Icon: Thermometer, title: '400–500°C', desc: 'Temperatura di cottura' },
+              { Icon: Timer, title: '60–90 sec', desc: 'Tempo di cottura perfetto' },
+              { Icon: Flame, title: 'Legna selezionata', desc: 'Per un aroma autentico' },
+            ].map(({ Icon, title, desc }) => (
               <div key={title} className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                <span className="text-4xl mb-4 block">{emoji}</span>
+                <div className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center mb-4">
+                  <Icon size={24} className="text-tomato" strokeWidth={1.5} />
+                </div>
                 <p className="font-heading text-xl text-cream-light mb-1">{title}</p>
                 <p className="font-body text-sm text-cream/50">{desc}</p>
               </div>

@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { Truck, ShoppingBag, UtensilsCrossed, X, ChevronLeft, Phone } from 'lucide-react'
+import { Truck, ShoppingBag, UtensilsCrossed, X, ChevronLeft, Phone, Flame, Leaf, Wheat } from 'lucide-react'
 import { sedi } from '../data/menu'
+import imgMortadella from '../assets/margherita.png'
+import imgBronte from '../assets/funghi.png'
+import imgCarbonara from '../assets/norma.png'
 
 const sediContatti = [
   { nome: 'Piazza Armerina', tel: 'tel:+390935182485', wa: 'https://wa.me/390935182485', display: '0935 182 2485' },
@@ -30,22 +33,22 @@ const services = [
 
 const highlights = [
   {
-    icon: '🔥',
+    Icon: Flame,
     title: 'Forno a Legna',
     desc: 'Cottura a legna per una crosta croccante e un cuore morbido. La tradizione che fa la differenza.',
   },
   {
-    icon: '🌿',
+    Icon: Leaf,
     title: 'Ingredienti km0',
     desc: 'Salsiccia locale, tuma siciliana, olio EVO del territorio. Sapori autentici a km zero.',
   },
   {
-    icon: '🌾',
+    Icon: Wheat,
     title: 'Senza Glutine',
     desc: 'Impasto senza glutine disponibile per tutti i tipi di pizza. Gusto senza compromessi.',
   },
   {
-    icon: '🛵',
+    Icon: Truck,
     title: 'Delivery & Asporto',
     desc: 'Consegna a domicilio nelle tre sedi. Oppure passa a ritirare, pronto in pochi minuti.',
   },
@@ -72,6 +75,10 @@ const reviews = [
     name: 'Marco Spelta',
     text: 'Pizzi-cotto fantastico, stracarico e gustosissimo!! Pizza fantastica, gustosa e soprattutto molto digeribile. Veloci e prezzo onesto!',
   },
+  {
+    name: 'Francesca Schiavoni',
+    text: 'Flavio e il suo team ti fanno sentire come a casa, con un servizio attento e gentile. Le pizze? Strepitose e con ingredienti freschissimi. Una tappa obbligata.',
+  },
 ]
 
 const featuredPizzas = [
@@ -80,18 +87,21 @@ const featuredPizzas = [
     price: '11€',
     desc: 'Bufala, mortadella Rovagnati riserva oro, scamorza, pesto pistacchio, burrata pugliese',
     tag: 'La più richiesta',
+    img: imgMortadella,
   },
   {
     name: 'Bronte',
     price: '10€',
     desc: 'Bufala campana, gamberetti, zucchine, pesto pistacchio, olio EVO',
     tag: "Pizza d'Autore",
+    img: imgBronte,
   },
   {
     name: 'Carbonara',
     price: '9€',
     desc: 'Carbon crema, fior di latte, guanciale, uova, Grana Padano',
     tag: 'Storica',
+    img: imgCarbonara,
   },
 ]
 
@@ -158,6 +168,12 @@ export default function Home() {
             >
               Le Nostre Sedi
             </Link>
+            <Link
+              to="/contatti"
+              className="border-2 border-gold/50 text-gold hover:border-gold hover:bg-gold hover:text-ink font-semibold px-8 py-4 rounded-full transition-colors"
+            >
+              Contattaci
+            </Link>
           </div>
 
           {/* Scroll indicator */}
@@ -180,12 +196,14 @@ export default function Home() {
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {highlights.map(({ icon, title, desc }) => (
+            {highlights.map(({ Icon, title, desc }) => (
               <div
                 key={title}
                 className="bg-cream-light rounded-2xl p-7 hover:shadow-md transition-shadow"
               >
-                <span className="text-4xl mb-5 block">{icon}</span>
+                <div className="w-14 h-14 rounded-full bg-cream flex items-center justify-center mb-5">
+                  <Icon size={32} className="text-tomato" strokeWidth={1.5} />
+                </div>
                 <h3 className="font-heading text-lg text-ink font-semibold mb-2">
                   {title}
                 </h3>
@@ -244,9 +262,9 @@ export default function Home() {
           <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory -mx-6 px-6
                           md:grid md:grid-cols-3 md:overflow-visible md:pb-0 md:mx-0 md:px-0
                           scrollbar-none">
-            {reviews.map(({ name, text }) => (
+            {reviews.map(({ name, text }, i) => (
               <div
-                key={name}
+                key={i}
                 className="flex-shrink-0 w-[80vw] sm:w-[60vw] snap-start
                            md:w-auto md:flex-shrink
                            bg-cream rounded-2xl p-6 flex flex-col gap-4"
@@ -289,17 +307,16 @@ export default function Home() {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
-            {featuredPizzas.map(({ name, price, desc, tag }) => (
+            {featuredPizzas.map(({ name, price, desc, tag, img }) => (
               <div
                 key={name}
                 className="group bg-cream rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
               >
-                {/* Placeholder image area */}
-                <div className="h-44 bg-gradient-to-br from-tomato/20 to-gold/20 flex items-center justify-center">
-                  <span className="font-heading text-6xl text-tomato/30 select-none">
-                    {name[0]}
-                  </span>
-                </div>
+                <img
+                  src={img}
+                  alt={name}
+                  className="w-full h-48 object-cover"
+                />
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-heading text-xl text-ink font-semibold">

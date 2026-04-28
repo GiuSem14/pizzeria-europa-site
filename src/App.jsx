@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CallButton from './components/CallButton'
+import WhatsAppButton from './components/WhatsAppButton'
 import CookieBanner from './components/CookieBanner'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
@@ -25,6 +26,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <WhatsAppButton />
       <CallButton />
       <CookieBanner />
     </div>

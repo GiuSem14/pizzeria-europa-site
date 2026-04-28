@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import logo from '../assets/logo.png'
 
 function IconInstagram({ size = 20 }) {
   return (
@@ -40,10 +41,9 @@ export default function Navbar() {
         <div className="flex-1">
           <Link
             to="/"
-            className="font-heading text-xl font-semibold"
             onClick={() => setOpen(false)}
           >
-            Pizzeria <span className="text-tomato">Europa</span>
+            <img src={logo} alt="Pizzeria Europa" className="h-12 w-auto object-contain" />
           </Link>
         </div>
 

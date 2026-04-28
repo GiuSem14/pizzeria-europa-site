@@ -42,7 +42,7 @@ export default function Footer() {
                     Lun: solo cena · Mar: chiuso
                   </p>
                 </div>
-                <
+                <a
                   href={`tel:${s.tel}`}
                   className="text-sm text-gold hover:text-gold-light transition-colors"
                 >

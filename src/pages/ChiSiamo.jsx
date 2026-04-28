@@ -1,23 +1,31 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Thermometer, Timer, Flame } from 'lucide-react'
+import imgLievitazione from '../assets/lievitazione-naturale.png'
+import imgCottura from '../assets/cottura-a-legna.png'
+import imgTerritorio from '../assets/vegetali.png'
+import imgInclusivita from '../assets/pizza.png'
 
 const values = [
   {
     title: 'Lievitazione naturale',
     desc: "Il nostro impasto riposa 24–48 ore. Non si accelera la natura: si aspetta, e il risultato si sente ad ogni morso.",
+    img: imgLievitazione,
   },
   {
     title: 'Cottura a legna',
     desc: "Il forno a legna trasforma ogni pizza: crosta croccante fuori, alveolata dentro, con quel sapore di fumo che non si imita.",
+    img: imgCottura,
   },
   {
     title: 'Territorio e km0',
     desc: "Salsiccia fresca locale, tuma siciliana, olio extravergine d'oliva della provincia. Sapori che raccontano questo territorio.",
+    img: imgTerritorio,
   },
   {
     title: 'Inclusività a tavola',
     desc: "Impasto senza glutine per tutti i tipi di pizza, mozzarella senza lattosio disponibile. Nessuno rimane fuori.",
+    img: imgInclusivita,
   },
 ]
 
@@ -157,10 +165,13 @@ export default function ChiSiamo() {
             <h2 className="font-heading text-4xl text-ink">I valori che ci guidano</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {values.map(({ title, desc }) => (
-              <div key={title} className="bg-cream-light rounded-2xl p-7">
-                <h3 className="font-heading text-xl text-ink font-semibold mb-3">{title}</h3>
-                <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
+            {values.map(({ title, desc, img }) => (
+              <div key={title} className="bg-cream-light rounded-xl overflow-hidden">
+                <img src={img} alt={title} className="w-full h-48 object-cover rounded-t-xl" />
+                <div className="p-5">
+                  <h3 className="font-heading text-xl text-ink font-semibold mb-3">{title}</h3>
+                  <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
+                </div>
               </div>
             ))}
           </div>

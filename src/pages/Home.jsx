@@ -6,6 +6,7 @@ import { sedi } from '../data/menu'
 import imgMortadella from '../assets/margherita.png'
 import imgBronte from '../assets/funghi.png'
 import imgCarbonara from '../assets/norma.png'
+import sfondhome from '../assets/sfondo-home.png'
 
 const sediContatti = [
   { nome: 'Piazza Armerina', tel: 'tel:+390935182485', wa: 'https://wa.me/390935182485', display: '0935 182 2485' },
@@ -121,31 +122,26 @@ export default function Home() {
       </Helmet>
 
       {/* HERO */}
-      <section className="relative min-h-screen bg-ink flex items-center overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 right-0 w-96 h-96 bg-tomato/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gold/8 rounded-full blur-3xl" />
-          <div
-            className="absolute inset-0 opacity-5"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle, #E8A020 1px, transparent 1px)',
-              backgroundSize: '48px 48px',
-            }}
-          />
-        </div>
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Background image */}
+        <img
+          src={sfondhome}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-24 text-center">
           <p className="font-body text-gold text-xs font-semibold uppercase tracking-[0.25em] mb-6">
             Pizzeria Europa — Provincia di Enna, Sicilia
           </p>
-          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl text-cream-light leading-tight mb-6">
+          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-6">
             L'arte della pizza,
             <br />
             <em className="not-italic text-tomato">il cuore</em> della Sicilia
           </h1>
-          <p className="font-body text-cream/60 text-lg max-w-lg mx-auto mb-10 leading-relaxed">
+          <p className="font-body text-white/75 text-lg max-w-lg mx-auto mb-10 leading-relaxed">
             Lievitazione naturale 24–48 ore, cottura a legna, materie prime selezionate.
             Tre sedi in provincia di Enna per portarti il meglio della tradizione.
           </p>

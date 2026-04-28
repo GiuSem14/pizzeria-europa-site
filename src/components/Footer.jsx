@@ -54,6 +54,8 @@ export default function Footer() {
               { to: '/menu', label: 'Menù completo' },
               { to: '/chi-siamo', label: 'Chi Siamo' },
               { to: '/contatti', label: 'Contatti e Prenotazioni' },
+              { to: '/contatti', label: 'Prenota un tavolo' },
+              { to: '/contatti', label: 'Consegna a domicilio' },
             ].map(({ to, label }) => (
               <li key={to}>
                 <Link

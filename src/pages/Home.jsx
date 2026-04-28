@@ -1,6 +1,32 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+import { Truck, ShoppingBag, UtensilsCrossed, X, ChevronLeft, Phone } from 'lucide-react'
 import { sedi } from '../data/menu'
+
+const sediContatti = [
+  { nome: 'Piazza Armerina', tel: 'tel:+390935182485', wa: 'https://wa.me/390935182485', display: '0935 182 2485' },
+  { nome: 'Barrafranca', tel: 'tel:+390934976507', wa: 'https://wa.me/390934976507', display: '0934 976507' },
+  { nome: 'Aidone', tel: 'tel:+390935545864', wa: 'https://wa.me/390935545864', display: '0935 545864' },
+]
+
+const services = [
+  {
+    Icon: Truck,
+    title: 'Consegna a domicilio',
+    desc: 'Portiamo la pizza direttamente a casa tua nelle zone servite da ciascuna sede.',
+  },
+  {
+    Icon: ShoppingBag,
+    title: 'Asporto',
+    desc: 'Ordina e ritira quando vuoi: pronta in pochi minuti, calda e fragrante.',
+  },
+  {
+    Icon: UtensilsCrossed,
+    title: 'Cena in sede',
+    desc: 'Accomodati da noi: ambiente caldo e accogliente, servizio attento.',
+  },
+]
 
 const highlights = [
   {
@@ -22,6 +48,29 @@ const highlights = [
     icon: '🛵',
     title: 'Delivery & Asporto',
     desc: 'Consegna a domicilio nelle tre sedi. Oppure passa a ritirare, pronto in pochi minuti.',
+  },
+]
+
+const reviews = [
+  {
+    name: 'Francesca Schiavoni',
+    text: 'Flavio e il suo team ti fanno sentire come a casa, con un servizio attento e gentile. Le pizze? Strepitose e con ingredienti freschissimi.',
+  },
+  {
+    name: 'Martin V.',
+    text: 'Veniamo spesso qui, la pizza è sempre buonissima. Il personale è davvero gentile e sempre disponibile. 5 stelle meritatissime.',
+  },
+  {
+    name: 'John Bevilacqua',
+    text: 'La migliore pizzeria da asporto di Piazza Armerina. Locale pulito ed accogliente, personale gentilissimo e professionale.',
+  },
+  {
+    name: 'Romina Mendola',
+    text: 'Un ambiente molto carino, ragazzi molto bravi ed accoglienti. Pizza senza glutine Ottima!',
+  },
+  {
+    name: 'Marco Spelta',
+    text: 'Pizzi-cotto fantastico, stracarico e gustosissimo!! Pizza fantastica, gustosa e soprattutto molto digeribile. Veloci e prezzo onesto!',
   },
 ]
 
@@ -47,6 +96,10 @@ const featuredPizzas = [
 ]
 
 export default function Home() {
+  const [modal, setModal] = useState(null) // null | 'main' | 'phone' | 'whatsapp'
+
+  const closeModal = () => setModal(null)
+
   return (
     <>
       <Helmet>
@@ -93,6 +146,12 @@ export default function Home() {
             >
               Sfoglia il Menù
             </Link>
+            <button
+              onClick={() => setModal('main')}
+              className="border-2 border-gold text-gold hover:bg-gold hover:text-ink font-semibold px-8 py-4 rounded-full transition-colors"
+            >
+              Prenota un tavolo
+            </button>
             <Link
               to="/contatti"
               className="border-2 border-cream/40 text-cream-light hover:border-cream hover:text-white font-semibold px-8 py-4 rounded-full transition-colors"
@@ -131,6 +190,87 @@ export default function Home() {
                   {title}
                 </h3>
                 <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SERVIZI */}
+      <section className="bg-ink py-14">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {services.map(({ Icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-5 bg-white/5 rounded-2xl p-6 border border-white/10">
+                <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-tomato/20 flex items-center justify-center">
+                  <Icon size={22} className="text-tomato" strokeWidth={1.75} />
+                </div>
+                <div>
+                  <h3 className="font-heading text-base text-cream-light font-semibold mb-1">{title}</h3>
+                  <p className="font-body text-sm text-cream/50 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RECENSIONI */}
+      <section className="bg-cream-light py-20 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Header con rating aggregato */}
+          <div className="text-center mb-12">
+            <p className="font-body text-tomato text-xs font-semibold uppercase tracking-[0.2em] mb-3">
+              Cosa dicono di noi
+            </p>
+            <h2 className="font-heading text-4xl text-ink mb-4">
+              Le parole dei nostri clienti
+            </h2>
+            <div className="inline-flex items-center gap-2.5 bg-cream rounded-full px-5 py-2.5">
+              {/* Stelle aggregate */}
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+              <span className="font-body text-sm font-semibold text-ink">4,6</span>
+              <span className="font-body text-sm text-ink-muted">· 376 recensioni Google</span>
+            </div>
+          </div>
+
+          {/* Carousel mobile / griglia desktop */}
+          <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory -mx-6 px-6
+                          md:grid md:grid-cols-3 md:overflow-visible md:pb-0 md:mx-0 md:px-0
+                          scrollbar-none">
+            {reviews.map(({ name, text }) => (
+              <div
+                key={name}
+                className="flex-shrink-0 w-[80vw] sm:w-[60vw] snap-start
+                           md:w-auto md:flex-shrink
+                           bg-cream rounded-2xl p-6 flex flex-col gap-4"
+              >
+                {/* Virgolette decorative */}
+                <span className="font-heading text-5xl text-gold/40 leading-none select-none -mb-2">
+                  "
+                </span>
+                <p className="font-body text-sm text-ink-muted leading-relaxed flex-1">
+                  {text}
+                </p>
+                <div className="flex items-center justify-between pt-3 border-t border-cream-light">
+                  <div>
+                    <p className="font-body text-sm font-semibold text-ink">{name}</p>
+                    <p className="font-body text-xs text-ink-faint mt-0.5">Google</p>
+                  </div>
+                  <div className="flex items-center gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="w-3.5 h-3.5 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -313,6 +453,113 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* MODAL PRENOTA */}
+      {modal && (
+        <div
+          className="fixed inset-0 bg-ink/60 z-50 flex items-center justify-center px-4"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-cream">
+              <div className="flex items-center gap-2">
+                {modal !== 'main' && (
+                  <button
+                    onClick={() => setModal('main')}
+                    className="text-ink-faint hover:text-ink transition-colors mr-1"
+                    aria-label="Torna indietro"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                )}
+                <h3 className="font-heading text-xl text-ink font-semibold">
+                  {modal === 'main' && 'Prenota un tavolo'}
+                  {modal === 'phone' && 'Chiama per prenotare'}
+                  {modal === 'whatsapp' && 'Scrivi su WhatsApp'}
+                </h3>
+              </div>
+              <button
+                onClick={closeModal}
+                className="text-ink-faint hover:text-ink transition-colors"
+                aria-label="Chiudi"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Corpo — vista principale */}
+            {modal === 'main' && (
+              <div className="p-6 flex flex-col gap-3">
+                <button
+                  onClick={() => setModal('phone')}
+                  className="flex items-center gap-4 w-full text-left p-4 rounded-xl border-2 border-cream hover:border-tomato hover:bg-cream transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-tomato/10 flex items-center justify-center flex-shrink-0">
+                    <Phone size={18} className="text-tomato" />
+                  </div>
+                  <div>
+                    <p className="font-body text-sm font-semibold text-ink">Chiama per prenotare</p>
+                    <p className="font-body text-xs text-ink-faint mt-0.5">Seleziona la sede più vicina</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setModal('whatsapp')}
+                  className="flex items-center gap-4 w-full text-left p-4 rounded-xl border-2 border-cream hover:border-green-400 hover:bg-green-50 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <svg width={18} height={18} viewBox="0 0 24 24" fill="#25D366">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-body text-sm font-semibold text-ink">Scrivi su WhatsApp</p>
+                    <p className="font-body text-xs text-ink-faint mt-0.5">Risposta rapida, seleziona la sede</p>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {/* Corpo — sedi telefono */}
+            {modal === 'phone' && (
+              <div className="py-2">
+                {sediContatti.map(({ nome, tel, display }) => (
+                  <a
+                    key={nome}
+                    href={tel}
+                    className="flex items-center justify-between px-6 py-4 hover:bg-cream transition-colors border-b border-cream last:border-0"
+                    onClick={closeModal}
+                  >
+                    <span className="font-body text-sm font-semibold text-ink">{nome}</span>
+                    <span className="font-body text-sm text-tomato font-medium">{display}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Corpo — sedi WhatsApp */}
+            {modal === 'whatsapp' && (
+              <div className="py-2">
+                {sediContatti.map(({ nome, wa, display }) => (
+                  <a
+                    key={nome}
+                    href={wa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-6 py-4 hover:bg-green-50 transition-colors border-b border-cream last:border-0"
+                    onClick={closeModal}
+                  >
+                    <span className="font-body text-sm font-semibold text-ink">{nome}</span>
+                    <span className="font-body text-sm font-medium" style={{ color: '#25D366' }}>{display}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   )
 }

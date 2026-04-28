@@ -1,8 +1,16 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { sedi } from '../data/menu'
+import { orariSedi } from '../data/orari'
+import OrariCard from '../components/OrariCard'
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mlgayaok'
+
+const MAP_SRC = {
+  'Piazza Armerina': 'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+33,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it',
+  'Barrafranca': 'https://maps.google.com/maps?q=Corso+Garibaldi+350,+94012+Barrafranca,+EN,+Italy&output=embed&hl=it',
+  'Aidone': 'https://maps.google.com/maps?q=Via+Martiri+della+Libert%C3%A0+15,+94010+Aidone,+EN,+Italy&output=embed&hl=it',
+}
 
 function SedCard({ sede }) {
   return (
@@ -115,7 +123,7 @@ export default function Contatti() {
         </div>
       </section>
 
-      {/* Sedi */}
+      {/* Sedi — contatti, orari, mappa */}
       <section className="bg-cream py-20">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
@@ -124,49 +132,27 @@ export default function Contatti() {
             </p>
             <h2 className="font-heading text-4xl text-ink">Trovaci vicino a te</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {sedi.map((s) => (
-              <SedCard key={s.id} sede={s} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mappe */}
-      <section className="bg-cream-light py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                nome: 'Piazza Armerina',
-                src: 'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+33,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it',
-              },
-              {
-                nome: 'Barrafranca',
-                src: 'https://maps.google.com/maps?q=Corso+Garibaldi+350,+94012+Barrafranca,+EN,+Italy&output=embed&hl=it',
-              },
-              {
-                nome: 'Aidone',
-                src: 'https://maps.google.com/maps?q=Via+Martiri+della+Libert%C3%A0+15,+94010+Aidone,+EN,+Italy&output=embed&hl=it',
-              },
-            ].map(({ nome, src }) => (
-              <div key={nome}>
-                <p className="font-body text-xs font-semibold uppercase tracking-widest text-ink-faint mb-2 pl-1">
-                  {nome}
-                </p>
-                <iframe
-                  title={`Mappa sede ${nome}`}
-                  src={src}
-                  width="100%"
-                  height="300"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="w-full rounded-2xl shadow-md"
-                />
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {sedi.map((s) => {
+              const orari = orariSedi.find((o) => o.sede === s.nome)
+              return (
+                <div key={s.id} className="flex flex-col gap-4">
+                  <SedCard sede={s} />
+                  {orari && <OrariCard sede={orari} />}
+                  <iframe
+                    title={`Mappa sede ${s.nome}`}
+                    src={MAP_SRC[s.nome]}
+                    width="100%"
+                    height="280"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full rounded-2xl shadow-md"
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>

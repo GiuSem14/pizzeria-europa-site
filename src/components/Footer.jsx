@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Clock } from 'lucide-react'
 import { sedi } from '../data/menu'
 
 export default function Footer() {
@@ -32,7 +33,16 @@ export default function Footer() {
               <li key={s.id}>
                 <p className="text-sm font-semibold text-cream-light">{s.nome}</p>
                 <p className="text-sm text-cream/60">{s.indirizzo}</p>
-                <a
+                <div className="mt-1.5 space-y-0.5">
+                  <p className="flex items-center gap-1.5 text-xs text-white/50">
+                    <Clock className="w-3 h-3 flex-shrink-0" />
+                    Mer–Dom: 12:00–14:30 / 19:00–23:30
+                  </p>
+                  <p className="text-xs text-white/50 pl-[18px]">
+                    Lun: solo cena · Mar: chiuso
+                  </p>
+                </div>
+                <
                   href={`tel:${s.tel}`}
                   className="text-sm text-gold hover:text-gold-light transition-colors"
                 >

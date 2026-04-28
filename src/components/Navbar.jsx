@@ -43,7 +43,7 @@ export default function Navbar() {
             to="/"
             onClick={() => setOpen(false)}
           >
-            <img src={logo} alt="Pizzeria Europa" className="h-12 w-auto object-contain" />
+            <img src={logo} alt="Pizzeria Europa" className="h-16 w-auto object-contain" />
           </Link>
         </div>
 

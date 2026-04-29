@@ -7,7 +7,8 @@ const sedi = [
   { nome: 'Aidone', tel: 'tel:+390935545864', display: '0935 545864' },
 ]
 
-export default function CallButton() {
+export default function CallButton({ isHidden = false }) {
+  if (isHidden) return null
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 

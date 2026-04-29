@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
 import Navbar from './components/Navbar'
@@ -13,6 +14,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import CookiePolicy from './pages/CookiePolicy'
 
 function App() {
+  const [cartOpen, setCartOpen] = useState(false)
+
   return (
     <div className="flex flex-col min-h-screen">
       <ScrollToTop />
@@ -20,7 +23,7 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
+          <Route path="/menu" element={<Menu onCartOpenChange={setCartOpen} />} />
           <Route path="/chi-siamo" element={<ChiSiamo />} />
           <Route path="/contatti" element={<Contatti />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -28,8 +31,8 @@ function App() {
         </Routes>
       </main>
       <Footer />
-      <WhatsAppButton />
-      <CallButton />
+      <WhatsAppButton isHidden={cartOpen} />
+      <CallButton isHidden={cartOpen} />
       <CookieBanner />
     </div>
   )

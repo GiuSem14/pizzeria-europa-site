@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories, sedi } from '../data/menu'
 import pizze from '../assets/pizze.png'
@@ -221,7 +221,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
   return (
     <>
       {/* Pannello riepilogo (slide da destra) */}
-      <div className="fixed inset-0 z-50 flex">
+      <div className="fixed inset-0 z-[60] flex">
         <div className="flex-1 bg-ink/50" onClick={onClose} />
         <div className="w-full max-w-md bg-white flex flex-col shadow-2xl">
           <div className="flex items-center justify-between px-6 py-4 border-b border-cream flex-shrink-0">
@@ -286,7 +286,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
 
       {/* Modal selezione sede (centrato, sopra il pannello) */}
       {sedeModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
           <div className="absolute inset-0 bg-ink/60" onClick={() => setSedeModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-cream">
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-cream">
@@ -330,10 +330,14 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
   )
 }
 
-export default function Menu() {
+export default function Menu({ onCartOpenChange }) {
   const [activeId, setActiveId] = useState('autore')
   const [cart, setCart] = useState({})
   const [showCart, setShowCart] = useState(false)
+
+  useEffect(() => {
+    onCartOpenChange?.(showCart)
+  }, [showCart])
 
   const toggle = (id) => setActiveId((prev) => (prev === id ? null : id))
 

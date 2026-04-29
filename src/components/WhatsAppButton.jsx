@@ -6,7 +6,8 @@ const sedi = [
   { nome: 'Aidone', href: 'https://wa.me/390935545864', display: '0935 545864' },
 ]
 
-export default function WhatsAppButton() {
+export default function WhatsAppButton({ isHidden = false }) {
+  if (isHidden) return null
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 

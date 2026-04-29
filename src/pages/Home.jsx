@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { Truck, ShoppingBag, UtensilsCrossed, X, ChevronLeft, Phone, Flame, Leaf, Wheat } from 'lucide-react'
+import { Truck, ShoppingBag, UtensilsCrossed, Flame, Leaf, Wheat } from 'lucide-react'
 import { sedi } from '../data/menu'
 import imgMortadella from '../assets/margherita.png'
 import imgBronte from '../assets/funghi.png'
@@ -9,11 +8,6 @@ import imgCarbonara from '../assets/norma.png'
 import sfondhome from '../assets/sfondo-home.png'
 import pizza2 from '../assets/pizza2.png'
 
-const sediContatti = [
-  { nome: 'Piazza Armerina', tel: 'tel:+390935182485', wa: 'https://wa.me/390935182485', display: '0935 182 2485' },
-  { nome: 'Barrafranca', tel: 'tel:+390934976507', wa: 'https://wa.me/390934976507', display: '0934 976507' },
-  { nome: 'Aidone', tel: 'tel:+390935545864', wa: 'https://wa.me/390935545864', display: '0935 545864' },
-]
 
 const services = [
   {
@@ -108,9 +102,12 @@ const featuredPizzas = [
 ]
 
 export default function Home() {
-  const [modal, setModal] = useState(null) // null | 'main' | 'phone' | 'whatsapp'
-
-  const closeModal = () => setModal(null)
+  const prenotaWhatsApp = () => {
+    const msg = encodeURIComponent(
+      `Ciao Pizzeria Europa! Vorrei prenotare un tavolo.\n\nNome: \nNumero di persone: \nData: \nOrario: \nSede preferita (Piazza Armerina / Barrafranca / Aidone): \nNote (es. occasione speciale, esigenze alimentari): \n\nGrazie!`
+    )
+    window.open(`https://wa.me/393802644694?text=${msg}`, '_blank')
+  }
 
   return (
     <>
@@ -154,7 +151,7 @@ export default function Home() {
               Sfoglia il Menù
             </Link>
             <button
-              onClick={() => setModal('main')}
+              onClick={prenotaWhatsApp}
               className="border-2 border-gold text-gold hover:bg-gold hover:text-ink font-semibold px-8 py-4 rounded-full transition-colors"
             >
               Prenota un tavolo
@@ -467,113 +464,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* MODAL PRENOTA */}
-      {modal && (
-        <div
-          className="fixed inset-0 bg-ink/60 z-50 flex items-center justify-center px-4"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-cream">
-              <div className="flex items-center gap-2">
-                {modal !== 'main' && (
-                  <button
-                    onClick={() => setModal('main')}
-                    className="text-ink-faint hover:text-ink transition-colors mr-1"
-                    aria-label="Torna indietro"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                )}
-                <h3 className="font-heading text-xl text-ink font-semibold">
-                  {modal === 'main' && 'Prenota un tavolo'}
-                  {modal === 'phone' && 'Chiama per prenotare'}
-                  {modal === 'whatsapp' && 'Scrivi su WhatsApp'}
-                </h3>
-              </div>
-              <button
-                onClick={closeModal}
-                className="text-ink-faint hover:text-ink transition-colors"
-                aria-label="Chiudi"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Corpo — vista principale */}
-            {modal === 'main' && (
-              <div className="p-6 flex flex-col gap-3">
-                <button
-                  onClick={() => setModal('phone')}
-                  className="flex items-center gap-4 w-full text-left p-4 rounded-xl border-2 border-cream hover:border-tomato hover:bg-cream transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-full bg-tomato/10 flex items-center justify-center flex-shrink-0">
-                    <Phone size={18} className="text-tomato" />
-                  </div>
-                  <div>
-                    <p className="font-body text-sm font-semibold text-ink">Chiama per prenotare</p>
-                    <p className="font-body text-xs text-ink-faint mt-0.5">Seleziona la sede più vicina</p>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setModal('whatsapp')}
-                  className="flex items-center gap-4 w-full text-left p-4 rounded-xl border-2 border-cream hover:border-green-400 hover:bg-green-50 transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <svg width={18} height={18} viewBox="0 0 24 24" fill="#25D366">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="font-body text-sm font-semibold text-ink">Scrivi su WhatsApp</p>
-                    <p className="font-body text-xs text-ink-faint mt-0.5">Risposta rapida, seleziona la sede</p>
-                  </div>
-                </button>
-              </div>
-            )}
-
-            {/* Corpo — sedi telefono */}
-            {modal === 'phone' && (
-              <div className="py-2">
-                {sediContatti.map(({ nome, tel, display }) => (
-                  <a
-                    key={nome}
-                    href={tel}
-                    className="flex items-center justify-between px-6 py-4 hover:bg-cream transition-colors border-b border-cream last:border-0"
-                    onClick={closeModal}
-                  >
-                    <span className="font-body text-sm font-semibold text-ink">{nome}</span>
-                    <span className="font-body text-sm text-tomato font-medium">{display}</span>
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {/* Corpo — sedi WhatsApp */}
-            {modal === 'whatsapp' && (
-              <div className="py-2">
-                {sediContatti.map(({ nome, wa, display }) => (
-                  <a
-                    key={nome}
-                    href={wa}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between px-6 py-4 hover:bg-green-50 transition-colors border-b border-cream last:border-0"
-                    onClick={closeModal}
-                  >
-                    <span className="font-body text-sm font-semibold text-ink">{nome}</span>
-                    <span className="font-body text-sm font-medium" style={{ color: '#25D366' }}>{display}</span>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }

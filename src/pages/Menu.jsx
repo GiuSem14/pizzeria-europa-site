@@ -220,16 +220,16 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
     pagamento !== null
 
   const buildMessage = () => {
-    const righe = [`Ciao Pizzeria Europa! Vorrei effettuare un ordine 🍕`]
+    const righe = ['Ciao Pizzeria Europa! Vorrei effettuare un ordine.']
     righe.push('')
-    righe.push(`👤 Nome: ${nomeCliente}`)
-    righe.push(`📞 Telefono: ${telefono}`)
-    righe.push(`🚚 Tipo: ${tipoOrdine === 'domicilio' ? 'Domicilio' : 'Asporto'}`)
-    if (tipoOrdine === 'domicilio') righe.push(`📍 Indirizzo: ${indirizzo}`)
-    righe.push(`🕐 Orario: ${orario.trim() || 'Prima possibile'}`)
-    righe.push(`💳 Pagamento: ${pagamento === 'carta' ? 'Carta - il fattorino porterà il POS' : 'Contanti'}`)
+    righe.push(`Nome: ${nomeCliente}`)
+    righe.push(`Telefono: ${telefono}`)
+    righe.push(`Tipo: ${tipoOrdine === 'domicilio' ? 'Domicilio' : 'Asporto'}`)
+    if (tipoOrdine === 'domicilio') righe.push(`Indirizzo: ${indirizzo}`)
+    righe.push(`Orario: ${orario.trim() || 'Prima possibile'}`)
+    righe.push(`Pagamento: ${pagamento === 'carta' ? 'Carta - il fattorino porterà il POS' : 'Contanti'}`)
     righe.push('')
-    righe.push('🛒 Ordine:')
+    righe.push('Ordine:')
     cartItems.forEach(({ item, qty, formato, prezzo, modifiche, nota }) => {
       let riga = `- ${qty}x ${item.name}`
       if (item.maxi) riga += ` (${formato === 'maxi' ? 'maxi' : 'normale'})`
@@ -239,7 +239,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
       righe.push(riga)
     })
     righe.push('')
-    righe.push(`💰 Totale stimato: ${fmtPrice(totalPrice)}`)
+    righe.push(`Totale stimato: ${fmtPrice(totalPrice)}`)
     righe.push('')
     righe.push('Grazie!')
     return encodeURIComponent(righe.join('\n'))

@@ -138,7 +138,7 @@ export default function Home() {
             Pizzeria Europa — Provincia di Enna, Sicilia
           </p>
           <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl text-white leading-tight mb-6">
-            L'arte della pizza,
+            L'arte della pizza
             <br />
             <em className="not-italic text-tomato">il cuore</em> della Sicilia
           </h1>
@@ -171,12 +171,6 @@ export default function Home() {
             >
               Contattaci
             </Link>
-          </div>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-cream/30">
-            <span className="text-xs font-body uppercase tracking-widest">Scopri</span>
-            <div className="w-px h-8 bg-cream/20 animate-pulse" />
           </div>
         </div>
       </section>

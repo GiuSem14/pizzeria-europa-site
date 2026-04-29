@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 
 const sedi = [
-  { nome: 'Piazza Armerina', href: 'https://wa.me/390935182485', display: '0935 182 2485' },
-  { nome: 'Barrafranca', href: 'https://wa.me/390934976507', display: '0934 976507' },
-  { nome: 'Aidone', href: 'https://wa.me/390935545864', display: '0935 545864' },
+  { nome: 'Piazza Armerina', href: 'https://wa.me/393802644694', display: '380 2644694' },
+  { nome: 'Barrafranca', href: 'https://wa.me/393802644694', display: '380 2644694' },
+  { nome: 'Aidone', href: 'https://wa.me/393802644694', display: '380 2644694' },
 ]
 
 export default function WhatsAppButton({ isHidden = false }) {

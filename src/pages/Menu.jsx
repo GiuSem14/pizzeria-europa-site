@@ -211,11 +211,13 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
   const [telefono, setTelefono] = useState('')
   const [indirizzo, setIndirizzo] = useState('')
   const [orario, setOrario] = useState('')
+  const [pagamento, setPagamento] = useState(null)
 
   const formValid =
     nomeCliente.trim() !== '' &&
     telefono.trim() !== '' &&
-    (tipoOrdine === 'asporto' || indirizzo.trim() !== '')
+    (tipoOrdine === 'asporto' || indirizzo.trim() !== '') &&
+    pagamento !== null
 
   const buildMessage = () => {
     const righe = [`Ciao Pizzeria Europa! Vorrei effettuare un ordine 🍕`]
@@ -225,6 +227,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
     righe.push(`🚚 Tipo: ${tipoOrdine === 'domicilio' ? 'Domicilio' : 'Asporto'}`)
     if (tipoOrdine === 'domicilio') righe.push(`📍 Indirizzo: ${indirizzo}`)
     righe.push(`🕐 Orario: ${orario.trim() || 'Prima possibile'}`)
+    righe.push(`💳 Pagamento: ${pagamento === 'carta' ? 'Carta - il fattorino porterà il POS' : 'Contanti'}`)
     righe.push('')
     righe.push('🛒 Ordine:')
     cartItems.forEach(({ item, qty, formato, prezzo, modifiche, nota }) => {
@@ -406,6 +409,33 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                   onChange={(e) => setOrario(e.target.value)}
                   className={inputCls}
                 />
+              </div>
+
+              {/* Pagamento */}
+              <div>
+                <span className={labelCls}>Metodo di pagamento *</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPagamento('contanti')}
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-semibold font-body border-2 transition-colors ${
+                      pagamento === 'contanti'
+                        ? 'bg-tomato border-tomato text-white'
+                        : 'border-cream text-ink hover:border-tomato'
+                    }`}
+                  >
+                    💵 Contanti
+                  </button>
+                  <button
+                    onClick={() => setPagamento('carta')}
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-semibold font-body border-2 transition-colors ${
+                      pagamento === 'carta'
+                        ? 'bg-tomato border-tomato text-white'
+                        : 'border-cream text-ink hover:border-tomato'
+                    }`}
+                  >
+                    💳 Carta (POS)
+                  </button>
+                </div>
               </div>
 
               {/* Divisore */}

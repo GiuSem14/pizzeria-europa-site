@@ -62,11 +62,11 @@ export default function Contatti() {
   return (
     <>
       <Helmet>
-        <title>Contatti — Pizzeria Europa</title>
-        <meta
-          name="description"
-          content="Contatta Pizzeria Europa: tre sedi a Piazza Armerina, Barrafranca e Aidone. Prenota un tavolo, ordina a domicilio o scrivici per un evento."
-        />
+        <title>Contatti e Sedi – Pizzeria Europa | Piazza Armerina, Barrafranca, Aidone</title>
+        <meta name="description" content="Trova Pizzeria Europa a Piazza Armerina, Barrafranca e Aidone. Orari, indirizzi, telefono e WhatsApp per prenotazioni e ordini." />
+        <meta property="og:title" content="Contatti – Pizzeria Europa" />
+        <meta property="og:description" content="Tre sedi in provincia di Enna. Prenota un tavolo o ordina via WhatsApp." />
+        <meta property="og:url" content="https://pizzeria-europa-site.vercel.app/contatti" />
       </Helmet>
 
       {/* Header */}

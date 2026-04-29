@@ -516,11 +516,11 @@ export default function Menu({ onCartOpenChange }) {
   return (
     <>
       <Helmet>
-        <title>Menù — Pizzeria Europa</title>
-        <meta
-          name="description"
-          content="Menù completo Pizzeria Europa: pizze d'autore, pizze storiche, tradizione, pizzicotti, panini, fritture e bevande. Impasto senza glutine disponibile."
-        />
+        <title>Menù – Pizzeria Europa | Pizze, Fritture e Bevande</title>
+        <meta name="description" content="Scopri il menù completo di Pizzeria Europa: pizze d'autore, pizze storiche, fritture, bevande. Impasto senza glutine disponibile." />
+        <meta property="og:title" content="Menù – Pizzeria Europa" />
+        <meta property="og:description" content="Pizze d'autore, storiche e classiche. Ordina direttamente via WhatsApp." />
+        <meta property="og:url" content="https://pizzeria-europa-site.vercel.app/menu" />
       </Helmet>
 
       {/* Header */}

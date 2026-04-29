@@ -112,11 +112,51 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>Pizzeria Europa — Pizza Artigianale in Provincia di Enna</title>
-        <meta
-          name="description"
-          content="Pizzeria Europa: lievitazione naturale 24-48h, cottura a legna, ingredienti km0. Tre sedi a Piazza Armerina, Barrafranca e Aidone. Ordina ora."
-        />
+        <title>Pizzeria Europa – Pizza Artigianale in Provincia di Enna, Sicilia</title>
+        <meta name="description" content="Pizzeria Europa: pizza napoletana con lievitazione naturale 24-48h, cottura a legna e ingredienti selezionati. Tre sedi a Piazza Armerina, Barrafranca e Aidone." />
+        <meta property="og:title" content="Pizzeria Europa – Pizza Artigianale in Sicilia" />
+        <meta property="og:description" content="Pizza napoletana con forno a legna e ingredienti freschi. Ordina online via WhatsApp." />
+        <meta property="og:type" content="restaurant" />
+        <meta property="og:url" content="https://pizzeria-europa-site.vercel.app" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Restaurant",
+          "name": "Pizzeria Europa",
+          "image": "https://pizzeria-europa-site.vercel.app/og-image.jpg",
+          "priceRange": "€€",
+          "servesCuisine": "Pizza Napoletana",
+          "telephone": "+390935182485",
+          "email": "flaviomira88@gmail.com",
+          "url": "https://pizzeria-europa-site.vercel.app",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Piazza Giorgio Boris Giuliano 33",
+            "addressLocality": "Piazza Armerina",
+            "postalCode": "94015",
+            "addressCountry": "IT"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 37.3833,
+            "longitude": 14.3667
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday"],
+              "opens": "19:00",
+              "closes": "23:00"
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Wednesday","Thursday","Friday","Saturday","Sunday"],
+              "opens": "12:00",
+              "closes": "23:30"
+            }
+          ],
+          "menu": "https://pizzeria-europa-site.vercel.app/menu",
+          "hasMap": "https://maps.google.com/?q=Piazza+Giorgio+Boris+Giuliano+33+Piazza+Armerina"
+        })}</script>
       </Helmet>
 
       {/* HERO */}
@@ -124,7 +164,7 @@ export default function Home() {
         {/* Background image */}
         <img
           src={sfondhome}
-          alt=""
+          alt="Pizzeria Europa – sala e ambiente con pizza napoletana cotta a legna"
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Overlay */}
@@ -302,7 +342,7 @@ export default function Home() {
               >
                 <img
                   src={img}
-                  alt={name}
+                  alt={`Pizza ${name} – Pizzeria Europa`}
                   className="w-full h-48 object-cover"
                 />
                 <div className="p-6">
@@ -437,7 +477,7 @@ export default function Home() {
       <section className="relative py-20 text-center overflow-hidden">
         <img
           src={pizza2}
-          alt=""
+          alt="Pizza artigianale Pizzeria Europa con ingredienti freschi"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
         />
         <div className="absolute inset-0 bg-black/40" />

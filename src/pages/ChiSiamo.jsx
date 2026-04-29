@@ -53,11 +53,11 @@ export default function ChiSiamo() {
   return (
     <>
       <Helmet>
-        <title>Chi Siamo — Pizzeria Europa</title>
-        <meta
-          name="description"
-          content="Pizzeria Europa: la nostra storia, i valori, il forno a legna e i fornitori selezionati. Artigianalità autentica in provincia di Enna, Sicilia."
-        />
+        <title>Chi Siamo – Pizzeria Europa | La Nostra Storia</title>
+        <meta name="description" content="La storia di Pizzeria Europa: passione per la pizza napoletana, forno a legna, ingredienti a km0 e tre sedi in provincia di Enna." />
+        <meta property="og:title" content="Chi Siamo – Pizzeria Europa" />
+        <meta property="og:description" content="La nostra storia, i nostri valori e la passione per la pizza artigianale." />
+        <meta property="og:url" content="https://pizzeria-europa-site.vercel.app/chi-siamo" />
       </Helmet>
 
       {/* Header */}
@@ -128,7 +128,7 @@ export default function ChiSiamo() {
       <section className="relative py-20 overflow-hidden">
         <img
           src={forno}
-          alt=""
+          alt="Forno a legna Pizzeria Europa acceso durante la cottura"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
         />
         <div className="absolute inset-0 bg-black/50" />
@@ -175,7 +175,7 @@ export default function ChiSiamo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {values.map(({ title, desc, img }) => (
               <div key={title} className="bg-cream-light rounded-xl overflow-hidden">
-                <img src={img} alt={title} className="w-full h-48 object-cover rounded-t-xl" />
+                <img src={img} alt={`${title} – Pizzeria Europa`} className="w-full h-48 object-cover rounded-t-xl" />
                 <div className="p-5">
                   <h3 className="font-heading text-xl text-ink font-semibold mb-3">{title}</h3>
                   <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
@@ -224,7 +224,7 @@ export default function ChiSiamo() {
       <section className="relative py-20 text-center overflow-hidden">
         <img
           src={pizzeria}
-          alt=""
+          alt="Sala interna Pizzeria Europa – ambiente caldo e accogliente"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
         />
         <div className="absolute inset-0 bg-black/50" />

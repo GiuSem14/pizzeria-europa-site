@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories } from '../data/menu'
 import pizze from '../assets/pizze.png'
+import ordinazioni from '../assets/ordinazioni.png'
 
 function BadgeSG() {
   return (
@@ -192,8 +193,14 @@ export default function Menu() {
       </section>
 
       {/* CTA */}
-      <section className="bg-tomato py-16 text-center">
-        <div className="max-w-xl mx-auto px-6">
+      <section className="relative py-16 text-center overflow-hidden">
+        <img
+          src={ordinazioni}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+        />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 max-w-xl mx-auto px-6">
           <h2 className="font-heading text-3xl text-white mb-3">
             Pronto a ordinare?
           </h2>

@@ -6,6 +6,7 @@ import imgCottura from '../assets/cottura-a-legna.png'
 import imgTerritorio from '../assets/vegetali.png'
 import imgInclusivita from '../assets/pizza.png'
 import forno from '../assets/forno.png'
+import pizzeria from '../assets/pizzeria.png'
 
 const values = [
   {
@@ -220,8 +221,14 @@ export default function ChiSiamo() {
       </section>
 
       {/* CTA */}
-      <section className="bg-tomato py-20 text-center">
-        <div className="max-w-xl mx-auto px-6">
+      <section className="relative py-20 text-center overflow-hidden">
+        <img
+          src={pizzeria}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+        />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 max-w-xl mx-auto px-6">
           <h2 className="font-heading text-4xl text-white mb-4">
             Vieni a trovarci
           </h2>

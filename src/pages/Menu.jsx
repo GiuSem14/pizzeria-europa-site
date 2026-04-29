@@ -127,7 +127,7 @@ export default function Menu() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
         />
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">
           <p className="font-body text-gold text-xs font-semibold uppercase tracking-[0.2em] mb-4">
             Il nostro menù

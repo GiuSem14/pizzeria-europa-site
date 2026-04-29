@@ -449,7 +449,7 @@ export default function Home() {
           alt=""
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
         />
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">
           <h2 className="font-heading text-4xl text-white mb-4">
             Hai voglia di pizza?

@@ -35,7 +35,7 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-cream-light shadow-sm">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center">
+      <div className="max-w-6xl mx-auto px-6 py-2 flex items-center">
 
         {/* Sinistra — logo */}
         <div className="flex-1">
@@ -43,7 +43,7 @@ export default function Navbar() {
             to="/"
             onClick={() => setOpen(false)}
           >
-            <img src={logo} alt="Pizzeria Europa" className="h-20 w-auto object-contain" />
+            <img src={logo} alt="Pizzeria Europa" className="h-12 w-auto object-contain" />
           </Link>
         </div>
 

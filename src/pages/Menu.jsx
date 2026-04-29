@@ -201,11 +201,32 @@ const SEDI_WA = [
   { nome: 'Aidone',          numero: '390935545864' },
 ]
 
+const inputCls = 'w-full font-body text-sm border border-cream rounded-lg p-3 text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors'
+const labelCls = 'block font-body text-xs font-semibold text-ink-muted uppercase tracking-wide mb-1'
+
 function CartPanel({ cartItems, totalPrice, onClose }) {
   const [sedeModal, setSedeModal] = useState(false)
+  const [tipoOrdine, setTipoOrdine] = useState('asporto')
+  const [nomeCliente, setNomeCliente] = useState('')
+  const [telefono, setTelefono] = useState('')
+  const [indirizzo, setIndirizzo] = useState('')
+  const [orario, setOrario] = useState('')
 
-  const buildMessage = (nomeSede) => {
-    const righe = [`Ciao Pizzeria Europa! Vorrei effettuare un ordine 🍕\n`]
+  const formValid =
+    nomeCliente.trim() !== '' &&
+    telefono.trim() !== '' &&
+    (tipoOrdine === 'asporto' || indirizzo.trim() !== '')
+
+  const buildMessage = () => {
+    const righe = [`Ciao Pizzeria Europa! Vorrei effettuare un ordine 🍕`]
+    righe.push('')
+    righe.push(`👤 Nome: ${nomeCliente}`)
+    righe.push(`📞 Telefono: ${telefono}`)
+    righe.push(`🚚 Tipo: ${tipoOrdine === 'domicilio' ? 'Domicilio' : 'Asporto'}`)
+    if (tipoOrdine === 'domicilio') righe.push(`📍 Indirizzo: ${indirizzo}`)
+    righe.push(`🕐 Orario: ${orario.trim() || 'Prima possibile'}`)
+    righe.push('')
+    righe.push('🛒 Ordine:')
     cartItems.forEach(({ item, qty, formato, prezzo, modifiche, nota }) => {
       let riga = `- ${qty}x ${item.name}`
       if (item.maxi) riga += ` (${formato === 'maxi' ? 'maxi' : 'normale'})`
@@ -214,7 +235,10 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
       if (nota) riga += `\n  Note: ${nota}`
       righe.push(riga)
     })
-    righe.push(`\n💰 Totale: ${fmtPrice(totalPrice)}\n\nGrazie!`)
+    righe.push('')
+    righe.push(`💰 Totale stimato: ${fmtPrice(totalPrice)}`)
+    righe.push('')
+    righe.push('Grazie!')
     return encodeURIComponent(righe.join('\n'))
   }
 
@@ -284,13 +308,15 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
         </div>
       </div>
 
-      {/* Modal selezione sede (centrato, sopra il pannello) */}
+      {/* Modal ordine + selezione sede */}
       {sedeModal && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
           <div className="absolute inset-0 bg-ink/60" onClick={() => setSedeModal(false)} />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-cream">
-            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-cream">
-              <h3 className="font-heading text-xl text-ink">Scegli la sede</h3>
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-cream flex flex-col max-h-[90vh]">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-cream flex-shrink-0">
+              <h3 className="font-heading text-xl text-ink">Completa l'ordine</h3>
               <button
                 onClick={() => setSedeModal(false)}
                 className="text-ink-faint hover:text-ink transition-colors"
@@ -301,27 +327,120 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 </svg>
               </button>
             </div>
-            <div className="px-6 py-5">
-              <p className="font-body text-sm text-ink-muted mb-4">
-                Il tuo ordine verrà inviato via WhatsApp alla sede selezionata.
-              </p>
-              <div className="space-y-3">
-                {SEDI_WA.map(({ nome, numero }) => (
-                  <a
-                    key={nome}
-                    href={`https://wa.me/${numero}?text=${buildMessage(nome)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={onClose}
-                    className="flex items-center justify-between w-full px-5 py-4 rounded-xl border-2 border-cream hover:border-green-400 hover:bg-green-50 transition-colors"
+
+            {/* Form + sedi */}
+            <div className="overflow-y-auto px-6 py-5 space-y-4">
+
+              {/* Tipo ordine */}
+              <div>
+                <span className={labelCls}>Tipo ordine</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setTipoOrdine('domicilio')}
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-semibold font-body border-2 transition-colors ${
+                      tipoOrdine === 'domicilio'
+                        ? 'bg-tomato border-tomato text-white'
+                        : 'border-cream text-ink hover:border-tomato'
+                    }`}
                   >
-                    <span className="font-body font-semibold text-ink">{nome}</span>
-                    <span className="text-green-600">
-                      <WaIcon />
-                    </span>
-                  </a>
-                ))}
+                    🛵 Domicilio
+                  </button>
+                  <button
+                    onClick={() => setTipoOrdine('asporto')}
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-semibold font-body border-2 transition-colors ${
+                      tipoOrdine === 'asporto'
+                        ? 'bg-tomato border-tomato text-white'
+                        : 'border-cream text-ink hover:border-tomato'
+                    }`}
+                  >
+                    🏃 Asporto
+                  </button>
+                </div>
               </div>
+
+              {/* Nome e cognome */}
+              <div>
+                <label className={labelCls}>Nome e cognome *</label>
+                <input
+                  type="text"
+                  placeholder="Es. Mario Rossi"
+                  value={nomeCliente}
+                  onChange={(e) => setNomeCliente(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+
+              {/* Telefono */}
+              <div>
+                <label className={labelCls}>Numero di telefono *</label>
+                <input
+                  type="tel"
+                  placeholder="Es. 333 1234567"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+
+              {/* Indirizzo — solo domicilio */}
+              {tipoOrdine === 'domicilio' && (
+                <div>
+                  <label className={labelCls}>Indirizzo di consegna *</label>
+                  <input
+                    type="text"
+                    placeholder="Via Roma 12"
+                    value={indirizzo}
+                    onChange={(e) => setIndirizzo(e.target.value)}
+                    className={inputCls}
+                  />
+                </div>
+              )}
+
+              {/* Orario */}
+              <div>
+                <label className={labelCls}>Orario desiderato</label>
+                <input
+                  type="text"
+                  placeholder="Es. 20:30"
+                  value={orario}
+                  onChange={(e) => setOrario(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+
+              {/* Divisore */}
+              <div className="border-t border-cream pt-4">
+                <p className="font-body text-sm font-semibold text-ink mb-3">
+                  Scegli la sede
+                </p>
+                {!formValid && (
+                  <p className="font-body text-xs text-ink-faint mb-3">
+                    Compila i campi obbligatori (*) per procedere.
+                  </p>
+                )}
+                <div className="space-y-2">
+                  {SEDI_WA.map(({ nome, numero }) => (
+                    <a
+                      key={nome}
+                      href={formValid ? `https://wa.me/${numero}?text=${buildMessage()}` : undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={formValid ? onClose : (e) => e.preventDefault()}
+                      className={`flex items-center justify-between w-full px-5 py-4 rounded-xl border-2 transition-colors ${
+                        formValid
+                          ? 'border-cream hover:border-green-400 hover:bg-green-50 cursor-pointer'
+                          : 'border-cream opacity-50 cursor-not-allowed pointer-events-none'
+                      }`}
+                    >
+                      <span className="font-body font-semibold text-ink">{nome}</span>
+                      <span className="text-green-600">
+                        <WaIcon />
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

@@ -5,7 +5,11 @@ import contatti from '../assets/contatti.png'
 import { orariSedi } from '../data/orari'
 import OrariCard from '../components/OrariCard'
 
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mlgayaok'
+const SEDI_CONTATTI = [
+  { nome: 'Piazza Armerina', numero: '393802644694' },
+  { nome: 'Barrafranca',     numero: '393802644694' },
+  { nome: 'Aidone',          numero: '393802644694' },
+]
 
 const MAP_SRC = {
   'Piazza Armerina': 'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+33,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it',
@@ -40,31 +44,19 @@ const IconExternal = () => (
 )
 
 export default function Contatti() {
-  const [status, setStatus] = useState('idle')
-  const [form, setForm] = useState({ nome: '', email: '', telefono: '', messaggio: '' })
+  const [nome, setNome] = useState('')
+  const [telefono, setTelefono] = useState('')
+  const [messaggio, setMessaggio] = useState('')
+  const [sede, setSede] = useState(null)
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-  }
+  const formValid = nome.trim() !== '' && messaggio.trim() !== '' && sede !== null
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setStatus('sending')
-    try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(form),
-      })
-      if (res.ok) {
-        setStatus('success')
-        setForm({ nome: '', email: '', telefono: '', messaggio: '' })
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
+  const handleInvia = () => {
+    const selectedSede = SEDI_CONTATTI.find((s) => s.nome === sede)
+    const msg = encodeURIComponent(
+      `Ciao Pizzeria Europa!\n\nNome: ${nome}\nTelefono: ${telefono.trim() || 'Non fornito'}\n\nMessaggio:\n${messaggio}`
+    )
+    window.open(`https://wa.me/${selectedSede.numero}?text=${msg}`, '_blank')
   }
 
   return (
@@ -243,7 +235,7 @@ export default function Contatti() {
         </div>
       </section>
 
-      {/* Form Formspree */}
+      {/* Form WhatsApp */}
       <section className="bg-cream py-20">
         <div className="max-w-2xl mx-auto px-6">
           <div className="text-center mb-10">
@@ -258,101 +250,83 @@ export default function Contatti() {
             </p>
           </div>
 
-          {status === 'success' ? (
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-              <span className="text-4xl block mb-4">✓</span>
-              <h3 className="font-heading text-2xl text-ink mb-2">Messaggio inviato!</h3>
-              <p className="font-body text-sm text-ink-muted">
-                Ti risponderemo al più presto. Grazie per aver contattato Pizzeria Europa.
-              </p>
-              <button
-                onClick={() => setStatus('idle')}
-                className="mt-6 text-sm font-semibold text-tomato hover:text-tomato-dark transition-colors"
-              >
-                Invia un altro messaggio
-              </button>
+          <div className="space-y-5">
+            {/* Nome */}
+            <div>
+              <label htmlFor="nome" className="block font-body text-sm font-medium text-ink mb-1.5">
+                Nome e cognome <span className="text-tomato">*</span>
+              </label>
+              <input
+                id="nome"
+                type="text"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors"
+                placeholder="Mario Rossi"
+              />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label htmlFor="nome" className="block font-body text-sm font-medium text-ink mb-1.5">
-                    Nome e cognome <span className="text-tomato">*</span>
-                  </label>
-                  <input
-                    id="nome"
-                    name="nome"
-                    type="text"
-                    required
-                    value={form.nome}
-                    onChange={handleChange}
-                    className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-tomato/30 focus:border-tomato transition-colors"
-                    placeholder="Mario Rossi"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="telefono" className="block font-body text-sm font-medium text-ink mb-1.5">
-                    Telefono
-                  </label>
-                  <input
-                    id="telefono"
-                    name="telefono"
-                    type="tel"
-                    value={form.telefono}
-                    onChange={handleChange}
-                    className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-tomato/30 focus:border-tomato transition-colors"
-                    placeholder="+39 333 000 0000"
-                  />
-                </div>
+
+            {/* Telefono */}
+            <div>
+              <label htmlFor="telefono" className="block font-body text-sm font-medium text-ink mb-1.5">
+                Telefono
+              </label>
+              <input
+                id="telefono"
+                type="tel"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+                className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors"
+                placeholder="+39 333 000 0000"
+              />
+            </div>
+
+            {/* Messaggio */}
+            <div>
+              <label htmlFor="messaggio" className="block font-body text-sm font-medium text-ink mb-1.5">
+                Messaggio <span className="text-tomato">*</span>
+              </label>
+              <textarea
+                id="messaggio"
+                rows={5}
+                value={messaggio}
+                onChange={(e) => setMessaggio(e.target.value)}
+                className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors resize-none"
+                placeholder="Vorrei prenotare un tavolo per 4 persone sabato sera..."
+              />
+            </div>
+
+            {/* Sede */}
+            <div>
+              <span className="block font-body text-sm font-medium text-ink mb-1.5">
+                Sede <span className="text-tomato">*</span>
+              </span>
+              <div className="flex gap-2">
+                {SEDI_CONTATTI.map(({ nome: nomeSede }) => (
+                  <button
+                    key={nomeSede}
+                    onClick={() => setSede(nomeSede)}
+                    className={`flex-1 py-3 rounded-xl text-sm font-semibold font-body border-2 transition-colors ${
+                      sede === nomeSede
+                        ? 'bg-tomato border-tomato text-white'
+                        : 'border-cream text-ink hover:border-tomato'
+                    }`}
+                  >
+                    {nomeSede}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="email" className="block font-body text-sm font-medium text-ink mb-1.5">
-                  Email <span className="text-tomato">*</span>
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-tomato/30 focus:border-tomato transition-colors"
-                  placeholder="mario@email.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="messaggio" className="block font-body text-sm font-medium text-ink mb-1.5">
-                  Messaggio <span className="text-tomato">*</span>
-                </label>
-                <textarea
-                  id="messaggio"
-                  name="messaggio"
-                  required
-                  rows={5}
-                  value={form.messaggio}
-                  onChange={handleChange}
-                  className="w-full bg-cream-light border border-cream rounded-xl px-4 py-3 font-body text-sm text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-tomato/30 focus:border-tomato transition-colors resize-none"
-                  placeholder="Vorrei prenotare un tavolo per 4 persone sabato sera..."
-                />
-              </div>
-
-              {status === 'error' && (
-                <p className="font-body text-sm text-tomato bg-red-50 rounded-xl px-4 py-3">
-                  Si è verificato un errore. Riprova o contattaci direttamente per telefono.
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === 'sending'}
-                className="w-full bg-tomato hover:bg-tomato-dark disabled:opacity-60 text-white font-semibold py-4 rounded-full transition-colors"
-              >
-                {status === 'sending' ? 'Invio in corso…' : 'Invia messaggio'}
-              </button>
-            </form>
-          )}
+            {/* Submit */}
+            <button
+              onClick={handleInvia}
+              disabled={!formValid}
+              className="w-full bg-tomato hover:bg-tomato-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-full transition-colors"
+            >
+              Invia messaggio su WhatsApp
+            </button>
+          </div>
         </div>
       </section>
     </>

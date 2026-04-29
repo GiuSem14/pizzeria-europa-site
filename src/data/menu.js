@@ -132,6 +132,8 @@ export const sedi = [
     citta: 'Piazza Armerina (EN)',
     tel: '+39 0935 182 2485',
     telDisplay: '0935 182 2485',
+    telMobile: '+39 380 2644694',
+    telMobileDisplay: '380 2644694',
   },
   {
     id: 'barrafranca',
@@ -152,5 +154,7 @@ export const sedi = [
     citta: 'Aidone (EN)',
     tel: '+39 0935 545864',
     telDisplay: '0935 545864',
+    telMobile: '+39 380 2644694',
+    telMobileDisplay: '380 2644694',
   },
 ]

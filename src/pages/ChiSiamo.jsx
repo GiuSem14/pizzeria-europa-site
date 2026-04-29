@@ -5,6 +5,7 @@ import imgLievitazione from '../assets/lievitazione-naturale.png'
 import imgCottura from '../assets/cottura-a-legna.png'
 import imgTerritorio from '../assets/vegetali.png'
 import imgInclusivita from '../assets/pizza.png'
+import forno from '../assets/forno.png'
 
 const values = [
   {
@@ -123,8 +124,14 @@ export default function ChiSiamo() {
       </section>
 
       {/* Forno a legna */}
-      <section className="bg-ink py-20">
-        <div className="max-w-6xl mx-auto px-6 text-center">
+      <section className="relative py-20 overflow-hidden">
+        <img
+          src={forno}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
           <p className="font-body text-gold text-xs font-semibold uppercase tracking-[0.2em] mb-4">
             Il cuore della pizzeria
           </p>

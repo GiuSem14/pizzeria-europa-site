@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories } from '../data/menu'
+import pizze from '../assets/pizze.png'
 
 function BadgeSG() {
   return (
@@ -120,8 +121,14 @@ export default function Menu() {
       </Helmet>
 
       {/* Header */}
-      <section className="bg-ink pt-32 pb-16 text-center">
-        <div className="max-w-2xl mx-auto px-6">
+      <section className="relative pt-32 pb-16 text-center overflow-hidden">
+        <img
+          src={pizze}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+        <div className="relative z-10 max-w-2xl mx-auto px-6">
           <p className="font-body text-gold text-xs font-semibold uppercase tracking-[0.2em] mb-4">
             Il nostro menù
           </p>

@@ -7,6 +7,7 @@ import imgMortadella from '../assets/margherita.png'
 import imgBronte from '../assets/funghi.png'
 import imgCarbonara from '../assets/norma.png'
 import sfondhome from '../assets/sfondo-home.png'
+import pizza2 from '../assets/pizza2.png'
 
 const sediContatti = [
   { nome: 'Piazza Armerina', tel: 'tel:+390935182485', wa: 'https://wa.me/390935182485', display: '0935 182 2485' },
@@ -442,8 +443,14 @@ export default function Home() {
       </section>
 
       {/* CTA FINALE */}
-      <section className="bg-tomato py-20 text-center">
-        <div className="max-w-2xl mx-auto px-6">
+      <section className="relative py-20 text-center overflow-hidden">
+        <img
+          src={pizza2}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 max-w-2xl mx-auto px-6">
           <h2 className="font-heading text-4xl text-white mb-4">
             Hai voglia di pizza?
           </h2>

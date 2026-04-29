@@ -23,7 +23,7 @@ export default function CallButton() {
   }, [open])
 
   return (
-    <div ref={containerRef} className="fixed bottom-20 right-6 z-50">
+    <div ref={containerRef} className="fixed bottom-36 right-6 z-50">
       {/* Pannello sedi */}
       {open && (
         <div className="absolute bottom-20 right-0 w-56 bg-white rounded-2xl shadow-xl border border-cream overflow-hidden">

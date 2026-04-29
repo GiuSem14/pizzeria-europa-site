@@ -479,7 +479,7 @@ export default function Menu() {
 
       {/* Cart FAB */}
       {totalQty > 0 && (
-        <div className="fixed bottom-6 right-6 z-40">
+        <div className="fixed bottom-6 right-6 z-50">
           <button
             onClick={() => setShowCart(true)}
             className="flex items-center gap-3 bg-tomato text-white font-semibold px-5 py-3.5 rounded-full shadow-xl hover:bg-tomato-dark transition-colors"

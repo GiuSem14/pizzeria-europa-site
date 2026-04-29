@@ -26,8 +26,8 @@ const links = [
 ]
 
 const socialLinks = [
-  { href: '#', label: 'Instagram Pizzeria Europa', Icon: IconInstagram },
-  { href: '#', label: 'Facebook Pizzeria Europa', Icon: IconFacebook },
+  { href: '#', label: 'Instagram Pizzeria Europa', Icon: IconInstagram, color: '#E1306C' },
+  { href: '#', label: 'Facebook Pizzeria Europa', Icon: IconFacebook, color: '#1877F2' },
 ]
 
 export default function Navbar() {
@@ -68,12 +68,13 @@ export default function Navbar() {
         {/* Destra — social (desktop) + social+burger (mobile) */}
         <div className="flex-1 flex items-center justify-end gap-3">
           {/* Social — visibili sempre (desktop e mobile) */}
-          {socialLinks.map(({ href, label, Icon }) => (
+          {socialLinks.map(({ href, label, Icon, color }) => (
             <a
               key={label}
               href={href}
               aria-label={label}
-              className="text-ink hover:text-tomato transition-colors"
+              style={{ color }}
+              className="transition-colors"
             >
               <Icon size={20} />
             </a>

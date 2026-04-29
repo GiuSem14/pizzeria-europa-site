@@ -346,7 +346,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                         : 'border-cream text-ink hover:border-tomato'
                     }`}
                   >
-                    🛵 Domicilio
+                    Domicilio
                   </button>
                   <button
                     onClick={() => setTipoOrdine('asporto')}
@@ -356,7 +356,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                         : 'border-cream text-ink hover:border-tomato'
                     }`}
                   >
-                    🏃 Asporto
+                    Asporto
                   </button>
                 </div>
               </div>
@@ -423,7 +423,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                         : 'border-cream text-ink hover:border-tomato'
                     }`}
                   >
-                    💵 Contanti
+                    Contanti
                   </button>
                   <button
                     onClick={() => setPagamento('carta')}
@@ -433,7 +433,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                         : 'border-cream text-ink hover:border-tomato'
                     }`}
                   >
-                    💳 Carta (POS)
+                    Carta (POS)
                   </button>
                 </div>
               </div>

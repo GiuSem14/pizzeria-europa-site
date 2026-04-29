@@ -48,6 +48,12 @@ export default function Footer() {
                 >
                   {s.telDisplay}
                 </a>
+                <a
+                  href="tel:+393802644694"
+                  className="block text-sm text-gold hover:text-gold-light transition-colors mt-0.5"
+                >
+                  380 264 4694
+                </a>
               </li>
             ))}
           </ul>

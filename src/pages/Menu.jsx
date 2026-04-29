@@ -196,9 +196,9 @@ const WaIcon = () => (
 )
 
 const SEDI_WA = [
-  { nome: 'Piazza Armerina', numero: '390935182485' },
-  { nome: 'Barrafranca',     numero: '390934976507' },
-  { nome: 'Aidone',          numero: '390935545864' },
+  { nome: 'Piazza Armerina', numero: '393802644694' },
+  { nome: 'Barrafranca',     numero: '393802644694' },
+  { nome: 'Aidone',          numero: '393802644694' },
 ]
 
 const inputCls = 'w-full font-body text-sm border border-cream rounded-lg p-3 text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors'

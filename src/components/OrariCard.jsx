@@ -23,9 +23,8 @@ export default function OrariCard({ sede }) {
 
       {/* Righe giorni */}
       <ul>
-        {sede.giorni.map(({ giorno, pranzo, cena }) => {
+        {sede.giorni.map(({ giorno, orario }) => {
           const isOggi = capitalize(giorno) === oggi
-          const chiuso = pranzo === null && cena === null
 
           return (
             <li
@@ -50,25 +49,12 @@ export default function OrariCard({ sede }) {
                 )}
               </div>
 
-              {/* Orari */}
+              {/* Orario */}
               <div className="text-right">
-                {chiuso ? (
-                  <span className="text-sm italic text-ink-faint">Chiuso</span>
+                {orario ? (
+                  <span className="text-sm text-ink-muted">{orario}</span>
                 ) : (
-                  <div className="flex flex-col gap-0.5">
-                    {pranzo && (
-                      <span className="text-sm text-ink-muted">
-                        <span className="text-[11px] text-ink-faint mr-1">pranzo</span>
-                        {pranzo}
-                      </span>
-                    )}
-                    {cena && (
-                      <span className="text-sm text-ink-muted">
-                        <span className="text-[11px] text-ink-faint mr-1">cena</span>
-                        {cena}
-                      </span>
-                    )}
-                  </div>
+                  <span className="text-sm italic text-ink-faint">Chiuso</span>
                 )}
               </div>
             </li>

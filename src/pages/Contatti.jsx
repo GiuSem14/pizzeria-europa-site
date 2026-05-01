@@ -12,9 +12,9 @@ const SEDI_CONTATTI = [
 ]
 
 const MAP_SRC = {
-  'Piazza Armerina': 'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+33,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it',
+  'Piazza Armerina': 'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+18,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it',
   'Barrafranca':     'https://maps.google.com/maps?q=Corso+Garibaldi+350,+94012+Barrafranca,+EN,+Italy&output=embed&hl=it',
-  'Aidone':          'https://maps.google.com/maps?q=Via+Martiri+della+Libert%C3%A0+15,+94010+Aidone,+EN,+Italy&output=embed&hl=it',
+  'Aidone':          'https://maps.google.com/maps?q=Viale+Martiri+della+Libert%C3%A0+15,+94010+Aidone,+EN,+Italy&output=embed&hl=it',
 }
 
 // SVG path helpers

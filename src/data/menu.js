@@ -127,7 +127,7 @@ export const sedi = [
   {
     id: 'piazza-armerina',
     nome: 'Piazza Armerina',
-    indirizzo: 'Piazza Giorgio Boris Giuliano 33',
+    indirizzo: 'Piazza Giorgio Boris Giuliano 18',
     cap: '94015',
     citta: 'Piazza Armerina (EN)',
     tel: '+39 0935 182 2485',
@@ -149,7 +149,7 @@ export const sedi = [
   {
     id: 'aidone',
     nome: 'Aidone',
-    indirizzo: 'Via Martiri della Libertà 15',
+    indirizzo: 'Viale Martiri della Libertà 15',
     cap: '94010',
     citta: 'Aidone (EN)',
     tel: '+39 0935 545864',

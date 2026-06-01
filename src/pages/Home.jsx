@@ -516,18 +516,18 @@ export default function Home() {
             Ordina adesso, vieni a trovarci, o contattaci per un evento su misura.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="tel:+390935549864"
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('openCallPanel'))}
               className="bg-white text-tomato font-semibold px-8 py-4 rounded-full hover:bg-cream transition-colors"
             >
               Chiama ora
-            </a>
-            <Link
-              to="/contatti"
+            </button>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('openWAPanel'))}
               className="border-2 border-white text-white font-semibold px-8 py-4 rounded-full hover:bg-white hover:text-tomato transition-colors"
             >
               Scrivici
-            </Link>
+            </button>
           </div>
         </div>
       </section>

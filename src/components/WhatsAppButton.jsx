@@ -11,6 +11,12 @@ export default function WhatsAppButton({ isHidden = false }) {
   const containerRef = useRef(null)
 
   useEffect(() => {
+    const handleOpen = () => setOpen(true)
+    window.addEventListener('openWAPanel', handleOpen)
+    return () => window.removeEventListener('openWAPanel', handleOpen)
+  }, [])
+
+  useEffect(() => {
     if (!open) return
     const handleClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {

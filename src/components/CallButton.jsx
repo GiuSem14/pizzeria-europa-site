@@ -12,6 +12,12 @@ export default function CallButton({ isHidden = false }) {
   const containerRef = useRef(null)
 
   useEffect(() => {
+    const handleOpen = () => setOpen(true)
+    window.addEventListener('openCallPanel', handleOpen)
+    return () => window.removeEventListener('openCallPanel', handleOpen)
+  }, [])
+
+  useEffect(() => {
     if (!open) return
     const handleClickOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {

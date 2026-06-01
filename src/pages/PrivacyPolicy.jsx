@@ -56,7 +56,6 @@ export default function PrivacyPolicy() {
             </p>
             <ul className="list-disc list-inside space-y-1 pl-2">
               <li>Nome e cognome</li>
-              <li>Indirizzo email</li>
               <li>Numero di telefono (facoltativo)</li>
               <li>Testo del messaggio</li>
             </ul>
@@ -76,21 +75,8 @@ export default function PrivacyPolicy() {
 
           <Section title="4. Modalità di trattamento e conservazione">
             <p>
-              I dati inviati tramite il modulo di contatto vengono trasmessi e archiviati
-              attraverso il servizio <strong>Formspree</strong> (Formspree Inc.), che funge da
-              responsabile esterno del trattamento. I dati sono conservati per il tempo strettamente
-              necessario a evadere la richiesta, e comunque non oltre 12 mesi.
-            </p>
-            <p>
-              Per l'informativa sulla privacy di Formspree consulta:{' '}
-              <a
-                href="https://formspree.io/legal/privacy-policy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-tomato hover:text-tomato-dark transition-colors"
-              >
-                formspree.io/legal/privacy-policy
-              </a>
+              I dati inseriti nel form di contatto vengono trasmessi direttamente tramite WhatsApp
+              e non vengono raccolti né conservati da terze parti.
             </p>
           </Section>
 
@@ -125,9 +111,7 @@ export default function PrivacyPolicy() {
           <Section title="6. Trasferimento dei dati a terzi">
             <p>
               I dati personali non vengono venduti, ceduti o comunicati a terzi, salvo quanto
-              strettamente necessario per l'erogazione del servizio richiesto. L'unico soggetto
-              terzo coinvolto è Formspree Inc. per la gestione del modulo di contatto, come
-              indicato al punto 4.
+              strettamente necessario per l'erogazione del servizio richiesto.
             </p>
           </Section>
 

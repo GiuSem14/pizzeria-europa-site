@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { sedi } from '../data/menu'
-import contatti from '../assets/contatti.png'
+import contatti from '../assets/contatti.jpg'
 import { orariSedi } from '../data/orari'
 import OrariCard from '../components/OrariCard'
 
@@ -74,7 +74,8 @@ export default function Contatti() {
         <img
           src={contatti}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          className="absolute inset-0 w-full h-full object-cover object-center blur-sm scale-105"
+          style={{ objectPosition: 'center 30%' }}
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">

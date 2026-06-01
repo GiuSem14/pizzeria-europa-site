@@ -12,6 +12,7 @@ import ChiSiamo from './pages/ChiSiamo'
 import Contatti from './pages/Contatti'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import CookiePolicy from './pages/CookiePolicy'
+import NotFound from './pages/NotFound'
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false)
@@ -28,6 +29,7 @@ function App() {
           <Route path="/contatti" element={<Contatti />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

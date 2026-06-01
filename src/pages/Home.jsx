@@ -1,12 +1,19 @@
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { Truck, ShoppingBag, UtensilsCrossed, Flame, Leaf, Wheat } from 'lucide-react'
+import { Truck, ShoppingBag, UtensilsCrossed, Flame, Leaf, Wheat, Clock } from 'lucide-react'
 import { sedi } from '../data/menu'
-import imgMortadella from '../assets/margherita.png'
-import imgBronte from '../assets/funghi.png'
-import imgCarbonara from '../assets/norma.png'
-import sfondhome from '../assets/sfondo-home.png'
-import pizza2 from '../assets/pizza2.png'
+import imgDelivery from '../assets/delivery.jpg'
+import imgAsporto from '../assets/asporto.jpg'
+import imgPizzeria from '../assets/pizzeria.jpg'
+import imgLievitazione from '../assets/lievitazione-naturale.jpg'
+import imgFornoHome from '../assets/forno-a-legna-home.jpg'
+import imgVegetali from '../assets/vegetali.jpg'
+import imgSenzaGlutine from '../assets/senza-glutine.jpg'
+import imgPizzaMortadella from '../assets/pizza-mortadella.jpg'
+import imgPizzaPistacchio from '../assets/pizza-pistacchio.jpg'
+import imgPizzaCarbonara from '../assets/pizza-carbonara.jpg'
+import sfondhome from '../assets/sfondo-home.jpg'
+import pizza2 from '../assets/pizza2.jpg'
 
 
 const services = [
@@ -14,39 +21,46 @@ const services = [
     Icon: Truck,
     title: 'Consegna a domicilio',
     desc: 'Portiamo la pizza direttamente a casa tua nelle zone servite da ciascuna sede.',
+    img: imgDelivery,
   },
   {
     Icon: ShoppingBag,
     title: 'Asporto',
     desc: 'Ordina e ritira quando vuoi: pronta in pochi minuti, calda e fragrante.',
+    img: imgAsporto,
   },
   {
     Icon: UtensilsCrossed,
     title: 'Cena in sede',
     desc: 'Accomodati da noi: ambiente caldo e accogliente, servizio attento.',
+    img: imgPizzeria,
   },
 ]
 
 const highlights = [
   {
+    Icon: Clock,
+    title: 'Lievitazione naturale',
+    desc: "Il nostro impasto riposa 24–48 ore. Non si accelera la natura: si aspetta, e il risultato si sente ad ogni morso.",
+    img: imgLievitazione,
+  },
+  {
     Icon: Flame,
-    title: 'Forno a Legna',
+    title: 'Cottura a legna',
     desc: 'Cottura a legna per una crosta croccante e un cuore morbido. La tradizione che fa la differenza.',
+    img: imgFornoHome,
   },
   {
     Icon: Leaf,
-    title: 'Ingredienti km0',
+    title: 'Territorio e km0',
     desc: 'Salsiccia locale, tuma siciliana, olio EVO del territorio. Sapori autentici a km zero.',
+    img: imgVegetali,
   },
   {
     Icon: Wheat,
-    title: 'Senza Glutine',
+    title: 'Inclusività a tavola',
     desc: 'Impasto senza glutine disponibile per tutti i tipi di pizza. Gusto senza compromessi.',
-  },
-  {
-    Icon: Truck,
-    title: 'Delivery & Asporto',
-    desc: 'Consegna a domicilio nelle tre sedi. Oppure passa a ritirare, pronto in pochi minuti.',
+    img: imgSenzaGlutine,
   },
 ]
 
@@ -54,10 +68,6 @@ const reviews = [
   {
     name: 'Francesca Schiavoni',
     text: 'Flavio e il suo team ti fanno sentire come a casa, con un servizio attento e gentile. Le pizze? Strepitose e con ingredienti freschissimi.',
-  },
-  {
-    name: 'Martin V.',
-    text: 'Veniamo spesso qui, la pizza è sempre buonissima. Il personale è davvero gentile e sempre disponibile. 5 stelle meritatissime.',
   },
   {
     name: 'John Bevilacqua',
@@ -72,8 +82,12 @@ const reviews = [
     text: 'Pizzi-cotto fantastico, stracarico e gustosissimo!! Pizza fantastica, gustosa e soprattutto molto digeribile. Veloci e prezzo onesto!',
   },
   {
-    name: 'Francesca Schiavoni',
-    text: 'Flavio e il suo team ti fanno sentire come a casa, con un servizio attento e gentile. Le pizze? Strepitose e con ingredienti freschissimi. Una tappa obbligata.',
+    name: 'Martin V',
+    text: 'Veniamo spesso qui, la pizza è sempre buonissima. Il personale è davvero gentile e sempre disponibile. 5 stelle meritatissime.',
+  },
+  {
+    name: 'Giorgia Ferrante',
+    text: 'Impasto leggero e digeribile, ingredienti di qualità. Ho ordinato la Mortadella e la Carbonara: entrambe deliziose. Torneremo sicuramente!',
   },
 ]
 
@@ -83,21 +97,21 @@ const featuredPizzas = [
     price: '11€',
     desc: 'Bufala, mortadella Rovagnati riserva oro, scamorza, pesto pistacchio, burrata pugliese',
     tag: 'La più richiesta',
-    img: imgMortadella,
+    img: imgPizzaMortadella,
   },
   {
     name: 'Bronte',
     price: '10€',
     desc: 'Bufala campana, gamberetti, zucchine, pesto pistacchio, olio EVO',
     tag: "Pizza d'Autore",
-    img: imgBronte,
+    img: imgPizzaPistacchio,
   },
   {
     name: 'Carbonara',
     price: '9€',
     desc: 'Carbon crema, fior di latte, guanciale, uova, Grana Padano',
     tag: 'Storica',
-    img: imgCarbonara,
+    img: imgPizzaCarbonara,
   },
 ]
 
@@ -224,18 +238,23 @@ export default function Home() {
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {highlights.map(({ Icon, title, desc }) => (
+            {highlights.map(({ Icon, title, desc, img }) => (
               <div
                 key={title}
-                className="bg-cream-light rounded-2xl p-7 hover:shadow-md transition-shadow"
+                className="bg-cream-light rounded-2xl overflow-hidden hover:shadow-md transition-shadow"
               >
-                <div className="w-14 h-14 rounded-full bg-cream flex items-center justify-center mb-5">
-                  <Icon size={32} className="text-tomato" strokeWidth={1.5} />
+                {img && (
+                  <img src={img} alt={title} className="w-full h-40 object-cover" loading="lazy" />
+                )}
+                <div className="p-7">
+                  <div className="w-14 h-14 rounded-full bg-cream flex items-center justify-center mb-5">
+                    <Icon size={32} className="text-tomato" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="font-heading text-lg text-ink font-semibold mb-2">
+                    {title}
+                  </h3>
+                  <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
                 </div>
-                <h3 className="font-heading text-lg text-ink font-semibold mb-2">
-                  {title}
-                </h3>
-                <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -246,14 +265,19 @@ export default function Home() {
       <section className="bg-ink py-14">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {services.map(({ Icon, title, desc }) => (
-              <div key={title} className="flex items-start gap-5 bg-white/5 rounded-2xl p-6 border border-white/10">
-                <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-tomato/20 flex items-center justify-center">
-                  <Icon size={22} className="text-tomato" strokeWidth={1.75} />
-                </div>
-                <div>
-                  <h3 className="font-heading text-base text-cream-light font-semibold mb-1">{title}</h3>
-                  <p className="font-body text-sm text-cream/50 leading-relaxed">{desc}</p>
+            {services.map(({ Icon, title, desc, img }) => (
+              <div key={title} className="bg-white/5 rounded-2xl overflow-hidden border border-white/10">
+                {img && (
+                  <img src={img} alt={title} className="w-full h-36 object-cover" loading="lazy" />
+                )}
+                <div className="flex items-start gap-5 p-6">
+                  <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-tomato/20 flex items-center justify-center">
+                    <Icon size={22} className="text-tomato" strokeWidth={1.75} />
+                  </div>
+                  <div>
+                    <h3 className="font-heading text-base text-cream-light font-semibold mb-1">{title}</h3>
+                    <p className="font-body text-sm text-cream/50 leading-relaxed">{desc}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -304,7 +328,8 @@ export default function Home() {
                 <p className="font-body text-sm text-ink-muted leading-relaxed flex-1">
                   {text}
                 </p>
-                <div className="flex items-center justify-between pt-3 border-t border-cream-light">
+                <div className="border-t-2 border-tomato mt-4 mb-3" />
+                <div className="flex items-center justify-between">
                   <div>
                     <p className="font-body text-sm font-semibold text-ink">{name}</p>
                     <p className="font-body text-xs text-ink-faint mt-0.5">Google</p>
@@ -344,6 +369,7 @@ export default function Home() {
                   src={img}
                   alt={`Pizza ${name} – Pizzeria Europa`}
                   className="w-full h-48 object-cover"
+                  loading="lazy"
                 />
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
@@ -479,6 +505,7 @@ export default function Home() {
           src={pizza2}
           alt="Pizza artigianale Pizzeria Europa con ingredienti freschi"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">

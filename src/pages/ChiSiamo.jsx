@@ -1,12 +1,14 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Thermometer, Timer, Flame } from 'lucide-react'
-import imgLievitazione from '../assets/lievitazione-naturale.png'
-import imgCottura from '../assets/cottura-a-legna.png'
-import imgTerritorio from '../assets/vegetali.png'
-import imgInclusivita from '../assets/pizza.png'
-import forno from '../assets/forno.png'
-import pizzeria from '../assets/pizzeria.png'
+import imgLievitazione from '../assets/lievitazione-naturale.jpg'
+import imgCottura from '../assets/forno-pizza-chi-siamo.jpg'
+import imgTerritorio from '../assets/vegetali.jpg'
+import imgInclusivita from '../assets/pizza.jpg'
+import forno from '../assets/forno-a-legna-chi-siamo.jpg'
+import pizze from '../assets/pizze.jpg'
+import ordinazioni from '../assets/ordinazioni.jpg'
+import team from '../assets/team.jpg'
 
 const values = [
   {
@@ -61,8 +63,15 @@ export default function ChiSiamo() {
       </Helmet>
 
       {/* Header */}
-      <section className="bg-ink pt-32 pb-16 text-center">
-        <div className="max-w-2xl mx-auto px-6">
+      <section className="relative pt-32 pb-16 text-center overflow-hidden">
+        <img
+          src={pizze}
+          alt="Pizzeria Europa – pizze artigianali cotte a legna"
+          className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative z-10 max-w-2xl mx-auto px-6">
           <p className="font-body text-gold text-xs font-semibold uppercase tracking-[0.2em] mb-4">
             La nostra storia
           </p>
@@ -103,22 +112,14 @@ export default function ChiSiamo() {
               </p>
             </div>
 
-            {/* Stats decorative */}
-            <div className="grid grid-cols-2 gap-5">
-              {[
-                { value: '3', label: 'Sedi in provincia di Enna' },
-                { value: '24–48h', label: 'Lievitazione naturale' },
-                { value: '60+', label: 'Pizze nel menù' },
-                { value: '100%', label: 'Ingredienti selezionati' },
-              ].map(({ value, label }) => (
-                <div
-                  key={label}
-                  className="bg-cream rounded-2xl p-6 text-center border border-cream"
-                >
-                  <p className="font-heading text-3xl text-tomato mb-2">{value}</p>
-                  <p className="font-body text-xs text-ink-muted leading-snug">{label}</p>
-                </div>
-              ))}
+            {/* Foto del team */}
+            <div className="rounded-2xl overflow-hidden shadow-lg">
+              <img
+                src={team}
+                alt="Il team di Pizzeria Europa"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -130,6 +131,7 @@ export default function ChiSiamo() {
           src={forno}
           alt="Forno a legna Pizzeria Europa acceso durante la cottura"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
@@ -175,7 +177,7 @@ export default function ChiSiamo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {values.map(({ title, desc, img }) => (
               <div key={title} className="bg-cream-light rounded-xl overflow-hidden">
-                <img src={img} alt={`${title} – Pizzeria Europa`} className="w-full h-48 object-cover rounded-t-xl" />
+                <img src={img} alt={`${title} – Pizzeria Europa`} className="w-full h-48 object-cover rounded-t-xl" loading="lazy" />
                 <div className="p-5">
                   <h3 className="font-heading text-xl text-ink font-semibold mb-3">{title}</h3>
                   <p className="font-body text-sm text-ink-muted leading-relaxed">{desc}</p>
@@ -223,9 +225,10 @@ export default function ChiSiamo() {
       {/* CTA */}
       <section className="relative py-20 text-center overflow-hidden">
         <img
-          src={pizzeria}
-          alt="Sala interna Pizzeria Europa – ambiente caldo e accogliente"
+          src={ordinazioni}
+          alt="Pizzeria Europa – vieni a trovarci nelle nostre sedi"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-xl mx-auto px-6">

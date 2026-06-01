@@ -1,6 +1,27 @@
 import { Link } from 'react-router-dom'
 import { Clock } from 'lucide-react'
 import { sedi } from '../data/menu'
+import { orariSedi } from '../data/orari'
+
+function getOrarioCompatto(giorni) {
+  const chiusi = giorni.filter((g) => !g.orario).map((g) => g.giorno.slice(0, 3))
+  const aperti = giorni.filter((g) => g.orario)
+  const byOrario = {}
+  aperti.forEach((g) => {
+    byOrario[g.orario] = byOrario[g.orario] ?? []
+    byOrario[g.orario].push(g.giorno.slice(0, 3))
+  })
+  const sorted = Object.entries(byOrario).sort((a, b) => b[1].length - a[1].length)
+  const lines = []
+  if (sorted.length === 1 && chiusi.length === 0) {
+    lines.push(`Lun–Dom: ${sorted[0][0]}`)
+  } else {
+    if (sorted.length >= 1) lines.push(`${sorted[0][0]}`)
+    if (sorted.length > 1) sorted.slice(1).forEach(([orario, days]) => lines.push(`${days.join(', ')}: ${orario}`))
+    if (chiusi.length > 0) lines.push(`Chiuso: ${chiusi.join(', ')}`)
+  }
+  return lines
+}
 
 export default function Footer() {
   return (
@@ -29,18 +50,20 @@ export default function Footer() {
             Le Nostre Sedi
           </p>
           <ul className="space-y-4">
-            {sedi.map((s) => (
+            {sedi.map((s) => {
+              const orariSede = orariSedi.find((o) => o.sede === s.nome)
+              const orarioLines = orariSede ? getOrarioCompatto(orariSede.giorni) : []
+              return (
               <li key={s.id}>
                 <p className="text-sm font-semibold text-cream-light">{s.nome}</p>
                 <p className="text-sm text-cream/60">{s.indirizzo}</p>
                 <div className="mt-1.5 space-y-0.5">
-                  <p className="flex items-center gap-1.5 text-xs text-white/50">
-                    <Clock className="w-3 h-3 flex-shrink-0" />
-                    Mer–Dom: 12:00–14:30 / 19:00–23:30
-                  </p>
-                  <p className="text-xs text-white/50 pl-[18px]">
-                    Lun: solo cena · Mar: chiuso
-                  </p>
+                  {orarioLines.map((line, i) => (
+                    <p key={i} className={`flex items-center gap-1.5 text-xs text-white/50 ${i > 0 ? 'pl-[18px]' : ''}`}>
+                      {i === 0 && <Clock className="w-3 h-3 flex-shrink-0" />}
+                      {line}
+                    </p>
+                  ))}
                 </div>
                 <a
                   href={`tel:${s.tel}`}
@@ -55,7 +78,7 @@ export default function Footer() {
                   380 264 4694
                 </a>
               </li>
-            ))}
+            )})}
           </ul>
         </div>
 
@@ -73,7 +96,7 @@ export default function Footer() {
               { to: '/contatti', label: 'Prenota un tavolo' },
               { to: '/contatti', label: 'Consegna a domicilio' },
             ].map(({ to, label }) => (
-              <li key={to}>
+              <li key={label}>
                 <Link
                   to={to}
                   className="text-sm text-cream/60 hover:text-cream-light transition-colors"

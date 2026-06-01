@@ -8,7 +8,6 @@ const sedi = [
 ]
 
 export default function CallButton({ isHidden = false }) {
-  if (isHidden) return null
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
@@ -22,6 +21,8 @@ export default function CallButton({ isHidden = false }) {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
+
+  if (isHidden) return null
 
   return (
     <div ref={containerRef} className="fixed bottom-36 right-6 z-50">

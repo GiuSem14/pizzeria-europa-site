@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories, sedi } from '../data/menu'
-import pizze from '../assets/pizze.png'
-import ordinazioni from '../assets/ordinazioni.png'
+import pizze from '../assets/pizze.jpg'
+import ordinazioni from '../assets/ordinazioni.jpg'
 
 function BadgeSG() {
   return (
@@ -38,23 +38,49 @@ function fmtPrice(n) {
   return n.toFixed(2).replace('.', ',') + '€'
 }
 
+function QtyControl({ qty, onInc, onDec, label }) {
+  return (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={onDec}
+        className="w-7 h-7 rounded-full border-2 border-tomato text-tomato font-bold leading-none flex items-center justify-center hover:bg-tomato hover:text-white transition-colors"
+        aria-label={`Rimuovi ${label}`}
+      >
+        −
+      </button>
+      <span className="font-body text-sm font-semibold text-ink w-4 text-center select-none">
+        {qty}
+      </span>
+      <button
+        onClick={onInc}
+        className="w-7 h-7 rounded-full bg-tomato text-white font-bold leading-none flex items-center justify-center hover:bg-tomato-dark transition-colors"
+        aria-label={`Aggiungi ${label}`}
+      >
+        +
+      </button>
+    </div>
+  )
+}
+
 function MenuItem({ item, catId, cartEntry, onUpdate }) {
   const id = `${catId}::${item.name}`
   const isNote = item.note
   const hasNumericPrice = typeof item.norm === 'number'
   const hasMaxi = hasNumericPrice && typeof item.maxi === 'number' && item.maxi !== null
+  const hasDescOnly = !hasNumericPrice && !item.price && !isNote
 
-  const qty = cartEntry?.qty ?? 0
-  const formato = cartEntry?.formato ?? 'norm'
+  const qtyNorm = cartEntry?.qtyNorm ?? 0
+  const qtyMaxi = cartEntry?.qtyMaxi ?? 0
   const modifiche = cartEntry?.modifiche ?? ''
   const nota = cartEntry?.nota ?? ''
+  const hasAny = qtyNorm > 0 || qtyMaxi > 0
 
   const update = (patch) =>
-    onUpdate(id, { qty, formato, modifiche, nota, ...patch })
+    onUpdate(id, { qtyNorm, qtyMaxi, modifiche, nota, ...patch })
 
   return (
     <div className={`py-4 border-b border-cream last:border-0 ${isNote ? 'opacity-70 italic' : ''}`}>
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline flex-wrap gap-x-1">
             <span className="font-body font-medium text-ink">{item.name}</span>
@@ -68,63 +94,56 @@ function MenuItem({ item, catId, cartEntry, onUpdate }) {
           )}
         </div>
 
-        <div className="flex-shrink-0 flex flex-col items-end gap-2 text-sm">
-          <PriceTag norm={item.norm} maxi={item.maxi} price={item.price} />
-          {item.norm && item.maxi && (
-            <p className="text-[10px] text-ink-faint">norm / maxi</p>
+        <div className="flex-shrink-0 flex flex-col items-end gap-2">
+          {!hasNumericPrice && !hasDescOnly && (
+            <PriceTag norm={item.norm} maxi={item.maxi} price={item.price} />
+          )}
+
+          {hasDescOnly && (
+            <QtyControl
+              qty={qtyNorm}
+              onInc={() => update({ qtyNorm: qtyNorm + 1 })}
+              onDec={() => update({ qtyNorm: Math.max(0, qtyNorm - 1) })}
+              label={item.name}
+            />
           )}
 
           {hasNumericPrice && !isNote && (
-            <div className="flex items-center gap-2 mt-1">
-              <button
-                onClick={() => update({ qty: qty - 1 })}
-                className="w-7 h-7 rounded-full border-2 border-tomato text-tomato font-bold leading-none flex items-center justify-center hover:bg-tomato hover:text-white transition-colors"
-                aria-label="Rimuovi uno"
-              >
-                −
-              </button>
-              <span className="font-body text-sm font-semibold text-ink w-4 text-center select-none">
-                {qty}
-              </span>
-              <button
-                onClick={() => update({ qty: qty + 1 })}
-                className="w-7 h-7 rounded-full bg-tomato text-white font-bold leading-none flex items-center justify-center hover:bg-tomato-dark transition-colors"
-                aria-label="Aggiungi uno"
-              >
-                +
-              </button>
-            </div>
+            <>
+              {/* Riga Normale */}
+              <div className="flex items-center gap-2">
+                <span className="font-body text-xs text-ink-muted text-right whitespace-nowrap">
+                  Norm {fmtPrice(item.norm)}
+                </span>
+                <QtyControl
+                  qty={qtyNorm}
+                  onInc={() => update({ qtyNorm: qtyNorm + 1 })}
+                  onDec={() => update({ qtyNorm: Math.max(0, qtyNorm - 1) })}
+                  label={`${item.name} normale`}
+                />
+              </div>
+
+              {/* Riga Maxi — solo se esiste */}
+              {hasMaxi && (
+                <div className="flex items-center gap-2">
+                  <span className="font-body text-xs text-ink-muted text-right whitespace-nowrap">
+                    Maxi {fmtPrice(item.maxi)}
+                  </span>
+                  <QtyControl
+                    qty={qtyMaxi}
+                    onInc={() => update({ qtyMaxi: qtyMaxi + 1 })}
+                    onDec={() => update({ qtyMaxi: Math.max(0, qtyMaxi - 1) })}
+                    label={`${item.name} maxi`}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      {hasNumericPrice && !isNote && qty > 0 && (
+      {(hasNumericPrice || hasDescOnly) && !isNote && hasAny && item.allowCustomization !== false && (
         <div className="mt-3 space-y-2">
-          {hasMaxi && (
-            <div className="flex items-center gap-2">
-              <span className="font-body text-xs text-ink-muted">Formato:</span>
-              <button
-                onClick={() => update({ formato: 'norm' })}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                  formato === 'norm'
-                    ? 'bg-tomato text-white'
-                    : 'border border-cream text-ink-muted hover:border-tomato hover:text-tomato'
-                }`}
-              >
-                Norm {fmtPrice(item.norm)}
-              </button>
-              <button
-                onClick={() => update({ formato: 'maxi' })}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                  formato === 'maxi'
-                    ? 'bg-tomato text-white'
-                    : 'border border-cream text-ink-muted hover:border-tomato hover:text-tomato'
-                }`}
-              >
-                Maxi {fmtPrice(item.maxi)}
-              </button>
-            </div>
-          )}
           <input
             type="text"
             placeholder="Modifica ingredienti (es. senza cipolla)"
@@ -146,11 +165,32 @@ function MenuItem({ item, catId, cartEntry, onUpdate }) {
 }
 
 function CategorySection({ category, isActive, onClick, cart, onUpdate }) {
+  const domId = `categoria-${category.label
+    .toLowerCase()
+    .replace(/['']/g, '-')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')}`
+
+  const handleClick = () => {
+    const opening = !isActive
+    onClick()
+    if (opening) {
+      setTimeout(() => {
+        const el = document.getElementById(domId)
+        if (el) {
+          const yOffset = -90
+          const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset
+          window.scrollTo({ top: y, behavior: 'smooth' })
+        }
+      }, 50)
+    }
+  }
+
   return (
-    <div id={category.id}>
+    <div id={domId} className="scroll-mt-20">
       <button
         className="w-full text-left"
-        onClick={onClick}
+        onClick={handleClick}
         aria-expanded={isActive}
       >
         <div className="flex items-center justify-between py-4 px-6 bg-cream-light hover:bg-cream transition-colors rounded-2xl cursor-pointer">
@@ -231,9 +271,10 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
     righe.push('')
     righe.push('Ordine:')
     cartItems.forEach(({ item, qty, formato, prezzo, modifiche, nota }) => {
+      const hasMaxi = item.maxi !== null && item.maxi !== undefined
       let riga = `- ${qty}x ${item.name}`
-      if (item.maxi) riga += ` (${formato === 'maxi' ? 'maxi' : 'normale'})`
-      riga += ` — ${fmtPrice(prezzo * qty)}`
+      if (hasMaxi) riga += ` (${formato === 'maxi' ? 'Maxi' : 'Normale'})`
+      if (prezzo > 0) riga += ` — ${fmtPrice(prezzo * qty)}`
       if (modifiche) riga += `\n  Modifiche: ${modifiche}`
       if (nota) riga += `\n  Note: ${nota}`
       righe.push(riga)
@@ -247,7 +288,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
 
   return (
     <>
-      {/* Pannello riepilogo (slide da destra) */}
       <div className="fixed inset-0 z-[60] flex">
         <div className="flex-1 bg-ink/50" onClick={onClose} />
         <div className="w-full max-w-md bg-white flex flex-col shadow-2xl">
@@ -265,35 +305,38 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-            {cartItems.map(({ id, item, qty, formato, prezzo, modifiche, nota }) => (
-              <div key={id} className="border-b border-cream pb-4 last:border-0 last:pb-0">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <p className="font-body font-semibold text-ink">
-                      {qty}× {item.name}
-                    </p>
-                    {item.maxi && (
-                      <p className="font-body text-xs text-ink-muted mt-0.5">
-                        Formato {formato === 'maxi' ? 'maxi' : 'normale'}
+            {cartItems.map(({ id, item, qty, formato, prezzo, modifiche, nota }) => {
+              const hasMaxi = item.maxi !== null && item.maxi !== undefined
+              return (
+                <div key={id} className="border-b border-cream pb-4 last:border-0 last:pb-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <p className="font-body font-semibold text-ink">
+                        {qty}× {item.name}
+                        {hasMaxi && (
+                          <span className="font-normal text-ink-muted text-xs ml-1">
+                            ({formato === 'maxi' ? 'Maxi' : 'Normale'})
+                          </span>
+                        )}
                       </p>
-                    )}
-                    {modifiche && (
-                      <p className="font-body text-xs text-ink-faint mt-0.5">
-                        Modifiche: {modifiche}
-                      </p>
-                    )}
-                    {nota && (
-                      <p className="font-body text-xs text-ink-faint">
-                        Nota: {nota}
-                      </p>
-                    )}
+                      {modifiche && (
+                        <p className="font-body text-xs text-ink-faint mt-0.5">
+                          Modifiche: {modifiche}
+                        </p>
+                      )}
+                      {nota && (
+                        <p className="font-body text-xs text-ink-faint">
+                          Nota: {nota}
+                        </p>
+                      )}
+                    </div>
+                    <span className="font-body font-semibold text-tomato flex-shrink-0">
+                      {fmtPrice(prezzo * qty)}
+                    </span>
                   </div>
-                  <span className="font-body font-semibold text-tomato flex-shrink-0">
-                    {fmtPrice(prezzo * qty)}
-                  </span>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="px-6 py-5 border-t border-cream flex-shrink-0">
@@ -311,13 +354,11 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
         </div>
       </div>
 
-      {/* Modal ordine + selezione sede */}
       {sedeModal && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
           <div className="absolute inset-0 bg-ink/60" onClick={() => setSedeModal(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm border border-cream flex flex-col max-h-[90vh]">
 
-            {/* Header */}
             <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-cream flex-shrink-0">
               <h3 className="font-heading text-xl text-ink">Completa l'ordine</h3>
               <button
@@ -331,10 +372,8 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
               </button>
             </div>
 
-            {/* Form + sedi */}
             <div className="overflow-y-auto px-6 py-5 space-y-4">
 
-              {/* Tipo ordine */}
               <div>
                 <span className={labelCls}>Tipo ordine</span>
                 <div className="flex gap-2">
@@ -361,7 +400,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 </div>
               </div>
 
-              {/* Nome e cognome */}
               <div>
                 <label className={labelCls}>Nome e cognome *</label>
                 <input
@@ -373,7 +411,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 />
               </div>
 
-              {/* Telefono */}
               <div>
                 <label className={labelCls}>Numero di telefono *</label>
                 <input
@@ -385,7 +422,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 />
               </div>
 
-              {/* Indirizzo — solo domicilio */}
               {tipoOrdine === 'domicilio' && (
                 <div>
                   <label className={labelCls}>Indirizzo di consegna *</label>
@@ -399,7 +435,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 </div>
               )}
 
-              {/* Orario */}
               <div>
                 <label className={labelCls}>Orario desiderato</label>
                 <input
@@ -411,7 +446,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 />
               </div>
 
-              {/* Pagamento */}
               <div>
                 <span className={labelCls}>Metodo di pagamento *</span>
                 <div className="flex gap-2">
@@ -438,7 +472,6 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                 </div>
               </div>
 
-              {/* Divisore */}
               <div className="border-t border-cream pt-4">
                 <p className="font-body text-sm font-semibold text-ink mb-3">
                   Scegli la sede
@@ -492,9 +525,11 @@ export default function Menu({ onCartOpenChange }) {
 
   const updateCart = (id, updates) => {
     setCart((prev) => {
-      const entry = prev[id] ?? { qty: 0, formato: 'norm', modifiche: '', nota: '' }
+      const entry = prev[id] ?? { qtyNorm: 0, qtyMaxi: 0, modifiche: '', nota: '' }
       const next = { ...entry, ...updates }
-      if (next.qty <= 0) {
+      next.qtyNorm = Math.max(0, next.qtyNorm ?? 0)
+      next.qtyMaxi = Math.max(0, next.qtyMaxi ?? 0)
+      if (next.qtyNorm === 0 && next.qtyMaxi === 0) {
         const { [id]: _removed, ...rest } = prev
         return rest
       }
@@ -502,12 +537,35 @@ export default function Menu({ onCartOpenChange }) {
     })
   }
 
-  const cartItems = Object.entries(cart).map(([id, entry]) => {
+  const cartItems = Object.entries(cart).flatMap(([id, entry]) => {
     const [catId, itemName] = id.split('::')
     const cat = menuCategories.find((c) => c.id === catId)
     const item = cat?.items.find((i) => i.name === itemName)
-    const prezzo = entry.formato === 'maxi' && item?.maxi ? item.maxi : item?.norm ?? 0
-    return { id, item, ...entry, prezzo }
+    if (!item) return []
+    const results = []
+    if (entry.qtyNorm > 0) {
+      results.push({
+        id: `${id}::norm`,
+        item,
+        qty: entry.qtyNorm,
+        formato: 'norm',
+        prezzo: item.norm ?? 0,
+        modifiche: entry.modifiche,
+        nota: entry.nota,
+      })
+    }
+    if (entry.qtyMaxi > 0 && item.maxi) {
+      results.push({
+        id: `${id}::maxi`,
+        item,
+        qty: entry.qtyMaxi,
+        formato: 'maxi',
+        prezzo: item.maxi,
+        modifiche: entry.modifiche,
+        nota: entry.nota,
+      })
+    }
+    return results
   })
 
   const totalQty = cartItems.reduce((sum, e) => sum + e.qty, 0)
@@ -529,6 +587,7 @@ export default function Menu({ onCartOpenChange }) {
           src={pizze}
           alt=""
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">
@@ -602,6 +661,7 @@ export default function Menu({ onCartOpenChange }) {
           src={ordinazioni}
           alt=""
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-xl mx-auto px-6">

@@ -7,7 +7,6 @@ const sedi = [
 ]
 
 export default function WhatsAppButton({ isHidden = false }) {
-  if (isHidden) return null
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
@@ -21,6 +20,8 @@ export default function WhatsAppButton({ isHidden = false }) {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
+
+  if (isHidden) return null
 
   return (
     <div ref={containerRef} className="fixed bottom-20 right-6 z-50">

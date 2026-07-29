@@ -254,8 +254,8 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
     (tipoOrdine === 'asporto' || indirizzo.trim() !== '') &&
     pagamento !== null
 
-  const buildMessage = () => {
-    const righe = ['Ciao Pizzeria Europa! Vorrei effettuare un ordine.']
+  const buildMessage = (nomeSede) => {
+    const righe = [`Ordine per Pizzeria Europa - ${nomeSede}`]
     righe.push('')
     righe.push(`Nome: ${nomeCliente}`)
     righe.push(`Telefono: ${telefono}`)
@@ -480,7 +480,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                   {sediAttive.map((s) => (
                     <a
                       key={s.id}
-                      href={formValid ? waHref(s.whatsapp, buildMessage()) : undefined}
+                      href={formValid ? waHref(s.whatsapp, buildMessage(s.nome)) : undefined}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={formValid ? onClose : (e) => e.preventDefault()}

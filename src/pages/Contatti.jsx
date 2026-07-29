@@ -35,13 +35,22 @@ export default function Contatti() {
   const [telefono, setTelefono] = useState('')
   const [messaggio, setMessaggio] = useState('')
   const [sede, setSede] = useState(null)
-
-  const formValid = nome.trim() !== '' && messaggio.trim() !== '' && sede !== null
+  const [errore, setErrore] = useState('')
 
   const handleInvia = () => {
-    const selectedSede = sediAttive.find((s) => s.nome === sede)
+    // Blocca l'invio se manca la sede: mostra un messaggio invece di aprire WhatsApp
+    const selectedSede = sede ? sediAttive.find((s) => s.nome === sede) : null
+    if (!selectedSede) {
+      setErrore('Seleziona una sede prima di inviare il messaggio.')
+      return
+    }
+    if (nome.trim() === '' || messaggio.trim() === '') {
+      setErrore('Compila nome e messaggio prima di inviare.')
+      return
+    }
+    setErrore('')
     const msg = encodeURIComponent(
-      `Ciao Pizzeria Europa!\n\nNome: ${nome}\nTelefono: ${telefono.trim() || 'Non fornito'}\n\nMessaggio:\n${messaggio}`
+      `Messaggio per Pizzeria Europa - ${selectedSede.nome}\n\nNome: ${nome}\nTelefono: ${telefono.trim() || 'Non fornito'}\n\nMessaggio:\n${messaggio}`
     )
     window.open(waHref(selectedSede.whatsapp, msg), '_blank')
   }
@@ -296,7 +305,7 @@ export default function Contatti() {
                 {sediAttive.map((s) => (
                   <button
                     key={s.id}
-                    onClick={() => setSede(s.nome)}
+                    onClick={() => { setSede(s.nome); setErrore('') }}
                     className={`flex-1 py-3 rounded-xl text-sm font-semibold font-body border-2 transition-colors ${
                       sede === s.nome
                         ? 'bg-tomato border-tomato text-white'
@@ -309,11 +318,17 @@ export default function Contatti() {
               </div>
             </div>
 
+            {/* Messaggio di errore */}
+            {errore && (
+              <p className="font-body text-sm text-tomato font-medium text-center" role="alert">
+                {errore}
+              </p>
+            )}
+
             {/* Submit */}
             <button
               onClick={handleInvia}
-              disabled={!formValid}
-              className="w-full bg-tomato hover:bg-tomato-dark disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-full transition-colors"
+              className="w-full bg-tomato hover:bg-tomato-dark text-white font-semibold py-4 rounded-full transition-colors"
             >
               Invia messaggio su WhatsApp
             </button>

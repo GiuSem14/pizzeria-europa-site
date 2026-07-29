@@ -1,21 +1,8 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { sedi } from '../data/menu'
+import { sediAttive, telHref, waHref } from '../data/sedi'
 import contatti from '../assets/contatti.webp'
-import { orariSedi } from '../data/orari'
 import OrariCard from '../components/OrariCard'
-
-const SEDI_CONTATTI = [
-  { nome: 'Piazza Armerina', numero: '393802644694' },
-  { nome: 'Barrafranca',     numero: '393802644694' },
-  { nome: 'Aidone',          numero: '393802644694' },
-]
-
-const MAP_SRC = {
-  'Piazza Armerina': 'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+18,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it',
-  'Barrafranca':     'https://maps.google.com/maps?q=Corso+Garibaldi+350,+94012+Barrafranca,+EN,+Italy&output=embed&hl=it',
-  'Aidone':          'https://maps.google.com/maps?q=Viale+Martiri+della+Libert%C3%A0+15,+94010+Aidone,+EN,+Italy&output=embed&hl=it',
-}
 
 // SVG path helpers
 const IconPin = () => (
@@ -52,12 +39,16 @@ export default function Contatti() {
   const formValid = nome.trim() !== '' && messaggio.trim() !== '' && sede !== null
 
   const handleInvia = () => {
-    const selectedSede = SEDI_CONTATTI.find((s) => s.nome === sede)
+    const selectedSede = sediAttive.find((s) => s.nome === sede)
     const msg = encodeURIComponent(
       `Ciao Pizzeria Europa!\n\nNome: ${nome}\nTelefono: ${telefono.trim() || 'Non fornito'}\n\nMessaggio:\n${messaggio}`
     )
-    window.open(`https://wa.me/${selectedSede.numero}?text=${msg}`, '_blank')
+    window.open(waHref(selectedSede.whatsapp, msg), '_blank')
   }
+
+  // Sedi di riferimento per i canali rapidi (derivate da sedi.js, nessun dato hardcoded)
+  const sedePrincipale = sediAttive[0]
+  const sedeBarrafranca = sediAttive.find((s) => s.id === 'barrafranca') ?? sedePrincipale
 
   return (
     <>
@@ -100,8 +91,7 @@ export default function Contatti() {
           </div>
 
           <div className="flex flex-col gap-10">
-            {sedi.map((s) => {
-              const orari = orariSedi.find((o) => o.sede === s.nome)
+            {sediAttive.map((s) => {
               return (
                 <div
                   key={s.id}
@@ -128,23 +118,23 @@ export default function Contatti() {
                         <div className="flex items-center gap-3">
                           <IconPhone />
                           <a
-                            href={`tel:${s.tel}`}
+                            href={telHref(s.telefono)}
                             className="text-tomato font-medium hover:text-tomato-dark transition-colors"
                           >
-                            {s.telDisplay}
+                            {s.telefono}
                           </a>
                         </div>
 
-                        {s.telMobile && (
+                        {s.cellulare && (
                           <div className="flex items-center gap-3">
                             <IconWhatsApp />
                             <a
-                              href={`https://wa.me/${s.telMobile.replace(/\D/g, '')}`}
+                              href={waHref(s.cellulare)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-green-600 font-medium hover:text-green-700 transition-colors"
                             >
-                              {s.telMobileDisplay} (WhatsApp)
+                              {s.cellulare} (WhatsApp)
                             </a>
                           </div>
                         )}
@@ -164,7 +154,7 @@ export default function Contatti() {
                       {/* Embed mappa */}
                       <iframe
                         title={`Mappa sede ${s.nome}`}
-                        src={MAP_SRC[s.nome]}
+                        src={s.urlMappa}
                         width="100%"
                         height="220"
                         style={{ border: 0 }}
@@ -177,7 +167,7 @@ export default function Contatti() {
 
                     {/* Colonna destra — orari */}
                     <div className="p-8">
-                      {orari && <OrariCard sede={orari} />}
+                      <OrariCard giorni={s.orari} />
                     </div>
 
                   </div>
@@ -193,7 +183,7 @@ export default function Contatti() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <a
-              href="tel:+390935549864"
+              href={telHref(sedePrincipale.telefono)}
               className="group flex flex-col items-center text-center p-7 bg-cream rounded-2xl hover:shadow-md transition-shadow"
             >
               <div className="w-12 h-12 bg-tomato/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-tomato/20 transition-colors">
@@ -206,7 +196,7 @@ export default function Contatti() {
             </a>
 
             <a
-              href="https://wa.me/393663674311"
+              href={waHref(sedeBarrafranca.cellulare)}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex flex-col items-center text-center p-7 bg-cream rounded-2xl hover:shadow-md transition-shadow"
@@ -217,11 +207,11 @@ export default function Contatti() {
                 </svg>
               </div>
               <h3 className="font-heading text-lg text-ink font-semibold mb-1">WhatsApp</h3>
-              <p className="font-body text-xs text-ink-muted">Sede Barrafranca — 366 3674311</p>
+              <p className="font-body text-xs text-ink-muted">Sede {sedeBarrafranca.nome} — {sedeBarrafranca.cellulare}</p>
             </a>
 
             <a
-              href="mailto:flaviomira88@gmail.com"
+              href={`mailto:${sedePrincipale.email}`}
               className="group flex flex-col items-center text-center p-7 bg-cream rounded-2xl hover:shadow-md transition-shadow"
             >
               <div className="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
@@ -230,7 +220,7 @@ export default function Contatti() {
                 </svg>
               </div>
               <h3 className="font-heading text-lg text-ink font-semibold mb-1">Email</h3>
-              <p className="font-body text-xs text-ink-muted">flaviomira88@gmail.com</p>
+              <p className="font-body text-xs text-ink-muted">{sedePrincipale.email}</p>
             </a>
           </div>
         </div>
@@ -303,17 +293,17 @@ export default function Contatti() {
                 Sede <span className="text-tomato">*</span>
               </span>
               <div className="flex gap-2">
-                {SEDI_CONTATTI.map(({ nome: nomeSede }) => (
+                {sediAttive.map((s) => (
                   <button
-                    key={nomeSede}
-                    onClick={() => setSede(nomeSede)}
+                    key={s.id}
+                    onClick={() => setSede(s.nome)}
                     className={`flex-1 py-3 rounded-xl text-sm font-semibold font-body border-2 transition-colors ${
-                      sede === nomeSede
+                      sede === s.nome
                         ? 'bg-tomato border-tomato text-white'
                         : 'border-cream text-ink hover:border-tomato'
                     }`}
                   >
-                    {nomeSede}
+                    {s.nome}
                   </button>
                 ))}
               </div>

@@ -139,38 +139,4 @@ export const menuCategories = [
   },
 ]
 
-export const sedi = [
-  {
-    id: 'piazza-armerina',
-    nome: 'Piazza Armerina',
-    indirizzo: 'Piazza Giorgio Boris Giuliano 18',
-    cap: '94015',
-    citta: 'Piazza Armerina (EN)',
-    tel: '+39 0935 182 2485',
-    telDisplay: '0935 182 2485',
-    telMobile: '+39 380 2644694',
-    telMobileDisplay: '380 2644694',
-  },
-  {
-    id: 'barrafranca',
-    nome: 'Barrafranca',
-    indirizzo: 'Corso Garibaldi 350',
-    cap: '94012',
-    citta: 'Barrafranca (EN)',
-    tel: '+39 0934 976507',
-    telDisplay: '0934 976507',
-    telMobile: '+39 366 3674311',
-    telMobileDisplay: '366 3674311',
-  },
-  {
-    id: 'aidone',
-    nome: 'Aidone',
-    indirizzo: 'Viale Martiri della Libertà 15',
-    cap: '94010',
-    citta: 'Aidone (EN)',
-    tel: '+39 0935 545864',
-    telDisplay: '0935 545864',
-    telMobile: '+39 380 2644694',
-    telMobileDisplay: '380 2644694',
-  },
-]
+// I dati delle sedi sono ora centralizzati in src/data/sedi.js

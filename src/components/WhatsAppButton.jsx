@@ -1,10 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-
-const sedi = [
-  { nome: 'Piazza Armerina', href: 'https://wa.me/393802644694', display: '380 2644694' },
-  { nome: 'Barrafranca', href: 'https://wa.me/393802644694', display: '380 2644694' },
-  { nome: 'Aidone', href: 'https://wa.me/393802644694', display: '380 2644694' },
-]
+import { sediAttive, waHref } from '../data/sedi'
 
 export default function WhatsAppButton({ isHidden = false }) {
   const [open, setOpen] = useState(false)
@@ -37,17 +32,17 @@ export default function WhatsAppButton({ isHidden = false }) {
           <p className="px-4 pt-4 pb-2 font-body text-xs font-semibold uppercase tracking-widest text-ink-faint">
             Scegli la sede
           </p>
-          {sedi.map(({ nome, href, display }) => (
+          {sediAttive.map((s) => (
             <a
-              key={nome}
-              href={href}
+              key={s.id}
+              href={waHref(s.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col px-4 py-3 hover:bg-cream transition-colors border-t border-cream first-of-type:border-0"
               onClick={() => setOpen(false)}
             >
-              <span className="font-body text-sm font-semibold text-ink">{nome}</span>
-              <span className="font-body text-xs mt-0.5" style={{ color: '#25D366' }}>{display}</span>
+              <span className="font-body text-sm font-semibold text-ink">{s.nome}</span>
+              <span className="font-body text-xs mt-0.5" style={{ color: '#25D366' }}>{s.whatsapp}</span>
             </a>
           ))}
         </div>

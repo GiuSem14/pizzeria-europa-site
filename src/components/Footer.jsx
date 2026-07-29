@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Clock } from 'lucide-react'
-import { sedi } from '../data/menu'
-import { orariSedi } from '../data/orari'
+import { sediAttive, telHref } from '../data/sedi'
 
 function getOrarioCompatto(giorni) {
   const chiusi = giorni.filter((g) => !g.orario).map((g) => g.giorno.slice(0, 3))
@@ -50,9 +49,8 @@ export default function Footer() {
             Le Nostre Sedi
           </p>
           <ul className="space-y-4">
-            {sedi.map((s) => {
-              const orariSede = orariSedi.find((o) => o.sede === s.nome)
-              const orarioLines = orariSede ? getOrarioCompatto(orariSede.giorni) : []
+            {sediAttive.map((s) => {
+              const orarioLines = getOrarioCompatto(s.orari)
               return (
               <li key={s.id}>
                 <p className="text-sm font-semibold text-cream-light">{s.nome}</p>
@@ -66,16 +64,16 @@ export default function Footer() {
                   ))}
                 </div>
                 <a
-                  href={`tel:${s.tel}`}
+                  href={telHref(s.telefono)}
                   className="text-sm text-gold hover:text-gold-light transition-colors"
                 >
-                  {s.telDisplay}
+                  {s.telefono}
                 </a>
                 <a
-                  href="tel:+393802644694"
+                  href={telHref(s.cellulare)}
                   className="block text-sm text-gold hover:text-gold-light transition-colors mt-0.5"
                 >
-                  380 264 4694
+                  {s.cellulare}
                 </a>
               </li>
             )})}

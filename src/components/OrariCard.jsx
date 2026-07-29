@@ -8,7 +8,7 @@ function getGiornoOggi() {
   return capitalize(new Date().toLocaleDateString('it-IT', { weekday: 'long' }))
 }
 
-export default function OrariCard({ sede }) {
+export default function OrariCard({ giorni }) {
   const oggi = getGiornoOggi()
 
   return (
@@ -23,7 +23,7 @@ export default function OrariCard({ sede }) {
 
       {/* Righe giorni */}
       <ul>
-        {sede.giorni.map(({ giorno, orario }) => {
+        {giorni.map(({ giorno, orario }) => {
           const isOggi = capitalize(giorno) === oggi
 
           return (

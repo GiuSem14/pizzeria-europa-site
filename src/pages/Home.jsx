@@ -132,6 +132,9 @@ export default function Home() {
         <meta property="og:description" content="Pizza napoletana con forno a legna e ingredienti freschi. Ordina online via WhatsApp." />
         <meta property="og:type" content="restaurant" />
         <meta property="og:url" content="https://pizzeria-europa-site.vercel.app" />
+        <meta property="og:image" content="https://pizzeria-europa-site.vercel.app/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         {/* Preload dell'immagine hero (LCP) */}
         <link rel="preload" as="image" href={sfondhome} />
         <script type="application/ld+json">{JSON.stringify({

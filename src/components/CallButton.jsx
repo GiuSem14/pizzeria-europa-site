@@ -1,11 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { PhoneCall } from 'lucide-react'
-
-const sedi = [
-  { nome: 'Piazza Armerina', tel: 'tel:+390935182485', display: '0935 182 2485' },
-  { nome: 'Barrafranca', tel: 'tel:+390934976507', display: '0934 976507' },
-  { nome: 'Aidone', tel: 'tel:+390935545864', display: '0935 545864' },
-]
+import { sediAttive, telHref } from '../data/sedi'
 
 export default function CallButton({ isHidden = false }) {
   const [open, setOpen] = useState(false)
@@ -38,15 +33,15 @@ export default function CallButton({ isHidden = false }) {
           <p className="px-4 pt-4 pb-2 font-body text-xs font-semibold uppercase tracking-widest text-ink-faint">
             Scegli la sede
           </p>
-          {sedi.map(({ nome, tel, display }) => (
+          {sediAttive.map((s) => (
             <a
-              key={nome}
-              href={tel}
+              key={s.id}
+              href={telHref(s.telefono)}
               className="flex flex-col px-4 py-3 hover:bg-cream transition-colors border-t border-cream first-of-type:border-0"
               onClick={() => setOpen(false)}
             >
-              <span className="font-body text-sm font-semibold text-ink">{nome}</span>
-              <span className="font-body text-xs text-tomato mt-0.5">{display}</span>
+              <span className="font-body text-sm font-semibold text-ink">{s.nome}</span>
+              <span className="font-body text-xs text-tomato mt-0.5">{s.telefono}</span>
             </a>
           ))}
         </div>

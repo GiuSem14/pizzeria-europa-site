@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { sedi } from '../data/menu'
-import contatti from '../assets/contatti.jpg'
+import contatti from '../assets/contatti.webp'
 import { orariSedi } from '../data/orari'
 import OrariCard from '../components/OrariCard'
 

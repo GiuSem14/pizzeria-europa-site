@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.webp'
 
 function IconInstagram({ size = 20 }) {
   return (

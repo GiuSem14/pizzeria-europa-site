@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories, sedi } from '../data/menu'
-import pizze from '../assets/pizze.jpg'
-import ordinazioni from '../assets/ordinazioni.jpg'
+import pizze from '../assets/pizze.webp'
+import ordinazioni from '../assets/ordinazioni.webp'
 
 function BadgeSG() {
   return (
@@ -587,7 +587,7 @@ export default function Menu({ onCartOpenChange }) {
           src={pizze}
           alt=""
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
-          loading="lazy"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">

@@ -1,14 +1,14 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { Thermometer, Timer, Flame } from 'lucide-react'
-import imgLievitazione from '../assets/lievitazione-naturale.jpg'
-import imgCottura from '../assets/forno-pizza-chi-siamo.jpg'
-import imgTerritorio from '../assets/vegetali.jpg'
-import imgInclusivita from '../assets/pizza.jpg'
-import forno from '../assets/forno-a-legna-chi-siamo.jpg'
-import pizze from '../assets/pizze.jpg'
-import ordinazioni from '../assets/ordinazioni.jpg'
-import team from '../assets/team.jpg'
+import imgLievitazione from '../assets/lievitazione-naturale.webp'
+import imgCottura from '../assets/forno-pizza-chi-siamo.webp'
+import imgTerritorio from '../assets/vegetali.webp'
+import imgInclusivita from '../assets/pizza.webp'
+import forno from '../assets/forno-a-legna-chi-siamo.webp'
+import pizze from '../assets/pizze.webp'
+import ordinazioni from '../assets/ordinazioni.webp'
+import team from '../assets/team.webp'
 
 const values = [
   {
@@ -68,7 +68,7 @@ export default function ChiSiamo() {
           src={pizze}
           alt="Pizzeria Europa – pizze artigianali cotte a legna"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
-          loading="lazy"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative z-10 max-w-2xl mx-auto px-6">

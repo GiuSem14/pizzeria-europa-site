@@ -2,18 +2,18 @@ import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { Truck, ShoppingBag, UtensilsCrossed, Flame, Leaf, Wheat, Clock } from 'lucide-react'
 import { sedi } from '../data/menu'
-import imgDelivery from '../assets/delivery.jpg'
-import imgAsporto from '../assets/asporto.jpg'
-import imgPizzeria from '../assets/pizzeria.jpg'
-import imgLievitazione from '../assets/lievitazione-naturale.jpg'
-import imgFornoHome from '../assets/forno-a-legna-home.jpg'
-import imgVegetali from '../assets/vegetali.jpg'
-import imgSenzaGlutine from '../assets/senza-glutine.jpg'
-import imgPizzaMortadella from '../assets/pizza-mortadella.jpg'
-import imgPizzaPistacchio from '../assets/pizza-pistacchio.jpg'
-import imgPizzaCarbonara from '../assets/pizza-carbonara.jpg'
-import sfondhome from '../assets/sfondo-home.jpg'
-import pizza2 from '../assets/pizza2.jpg'
+import imgDelivery from '../assets/delivery.webp'
+import imgAsporto from '../assets/asporto.webp'
+import imgPizzeria from '../assets/pizzeria.webp'
+import imgLievitazione from '../assets/lievitazione-naturale.webp'
+import imgFornoHome from '../assets/forno-a-legna-home.webp'
+import imgVegetali from '../assets/vegetali.webp'
+import imgSenzaGlutine from '../assets/senza-glutine.webp'
+import imgPizzaMortadella from '../assets/pizza-mortadella.webp'
+import imgPizzaPistacchio from '../assets/pizza-pistacchio.webp'
+import imgPizzaCarbonara from '../assets/pizza-carbonara.webp'
+import sfondhome from '../assets/sfondo-home.webp'
+import pizza2 from '../assets/pizza2.webp'
 
 
 const services = [
@@ -132,6 +132,8 @@ export default function Home() {
         <meta property="og:description" content="Pizza napoletana con forno a legna e ingredienti freschi. Ordina online via WhatsApp." />
         <meta property="og:type" content="restaurant" />
         <meta property="og:url" content="https://pizzeria-europa-site.vercel.app" />
+        {/* Preload dell'immagine hero (LCP) */}
+        <link rel="preload" as="image" href={sfondhome} />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Restaurant",
@@ -180,6 +182,7 @@ export default function Home() {
           src={sfondhome}
           alt="Pizzeria Europa – sala e ambiente con pizza napoletana cotta a legna"
           className="absolute inset-0 w-full h-full object-cover"
+          fetchPriority="high"
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/55 backdrop-blur-sm" />

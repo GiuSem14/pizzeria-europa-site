@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories } from '../data/menu'
+import {
+  supplementi as tuttiSupplementi,
+  rimozioni as tutteRimozioni,
+  totaleSupplementi,
+  nomiSupplementi,
+  nomiRimozioni,
+} from '../data/supplementi'
 import { sediAttive, sedeUnica, telHref, waHref } from '../data/sedi'
 import pizze from '../assets/pizze.webp'
 import ordinazioni from '../assets/ordinazioni.webp'
@@ -63,24 +70,133 @@ function QtyControl({ qty, onInc, onDec, label }) {
   )
 }
 
-function MenuItem({ item, catId, cartEntry, onUpdate }) {
-  const id = `${catId}::${item.name}`
+// ---------------------------------------------------------------------------
+// CHIAVE DI RIGA DEL CARRELLO
+// ---------------------------------------------------------------------------
+// Una riga non è più identificata dal solo prodotto, ma dal prodotto PIÙ la
+// personalizzazione scelta. Due personalizzazioni identiche devono cadere sulla
+// stessa chiave e sommarsi; due diverse devono restare righe distinte.
+//
+// Perché la firma è ordinata: chi sceglie "olive poi bufala" e chi sceglie
+// "bufala poi olive" ha ordinato la stessa cosa. Senza ordinamento nascerebbero
+// due righe identiche a video.
+//
+// Perché la nota è normalizzata: "Ben cotta" e "ben cotta " sono la stessa
+// richiesta. Nella voce resta però il testo originale, per la visualizzazione.
+//
+// La firma si calcola UNA SOLA VOLTA, alla conferma del modale. Se dipendesse
+// da un input sempre montato, ogni battuta cambierebbe la chiave e React
+// rimonterebbe la riga perdendo il focus.
+const firmaPersonalizzazione = ({ supplementi = [], rimozioni = [], nota = '' }) => {
+  const s = [...supplementi].sort().join(',')
+  const r = [...rimozioni].sort().join(',')
+  const n = nota.trim().replace(/\s+/g, ' ').toLowerCase()
+  if (!s && !r && !n) return 'base'
+  return `s=${s}|r=${r}|n=${n}`
+}
+
+const chiaveRiga = (catId, itemName, firma) => `${catId}::${itemName}::${firma}`
+
+// Riepilogo leggibile della personalizzazione di una riga.
+const descriviPersonalizzazione = (entry) => {
+  const parti = []
+  const agg = nomiSupplementi(entry.supplementi)
+  const via = nomiRimozioni(entry.rimozioni)
+  if (agg.length) parti.push(`con ${agg.join(', ')}`)
+  if (via.length) parti.push(`senza ${via.join(', ')}`)
+  return parti.join(' · ')
+}
+
+function RigaPersonalizzata({ chiave, entry, item, onUpdate }) {
+  const suppNorm = totaleSupplementi(entry.supplementi, 'norm')
+  const suppMaxi = totaleSupplementi(entry.supplementi, 'maxi')
+  const hasMaxi = typeof item.maxi === 'number' && item.maxi !== null
+  const descrizione = descriviPersonalizzazione(entry)
+
+  const patch = (calcola) => onUpdate(chiave, calcola)
+
+  return (
+    <div className="mt-3 pl-3 border-l-2 border-tomato/40">
+      <div className="flex items-start gap-3">
+        <div className="flex-1 min-w-0">
+          {descrizione && (
+            <p className="font-body text-xs text-ink leading-snug">{descrizione}</p>
+          )}
+          {entry.nota && (
+            <p className="font-body text-xs text-ink-faint leading-snug mt-0.5">
+              Nota: {entry.nota}
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => onUpdate(chiave, { qtyNorm: 0, qtyMaxi: 0 })}
+          aria-label={`Rimuovi la personalizzazione di ${item.name}`}
+          className="text-ink-faint hover:text-tomato transition-colors flex-shrink-0"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="flex flex-col items-end gap-2 mt-2">
+        <div className="flex items-center gap-2">
+          <span className="font-body text-xs text-ink-muted whitespace-nowrap">
+            Norm {fmtPrice((item.norm ?? 0) + suppNorm)}
+          </span>
+          <QtyControl
+            qty={entry.qtyNorm}
+            onInc={() => patch((e) => ({ qtyNorm: e.qtyNorm + 1 }))}
+            onDec={() => patch((e) => ({ qtyNorm: Math.max(0, e.qtyNorm - 1) }))}
+            label={`${item.name} normale personalizzata`}
+          />
+        </div>
+        {hasMaxi && (
+          <div className="flex items-center gap-2">
+            <span className="font-body text-xs text-ink-muted whitespace-nowrap">
+              Maxi {fmtPrice(item.maxi + suppMaxi)}
+            </span>
+            <QtyControl
+              qty={entry.qtyMaxi}
+              onInc={() => patch((e) => ({ qtyMaxi: e.qtyMaxi + 1 }))}
+              onDec={() => patch((e) => ({ qtyMaxi: Math.max(0, e.qtyMaxi - 1) }))}
+              label={`${item.name} maxi personalizzata`}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MenuItem({ item, catId, cart, onUpdate, onPersonalizza }) {
   const isNote = item.note
   const hasNumericPrice = typeof item.norm === 'number'
   const hasMaxi = hasNumericPrice && typeof item.maxi === 'number' && item.maxi !== null
-  const hasDescOnly = !hasNumericPrice && !item.price && !isNote
+  const personalizzabile = hasNumericPrice && !isNote && item.allowCustomization !== false
 
-  const qtyNorm = cartEntry?.qtyNorm ?? 0
-  const qtyMaxi = cartEntry?.qtyMaxi ?? 0
-  const modifiche = cartEntry?.modifiche ?? ''
-  const nota = cartEntry?.nota ?? ''
-  const hasAny = qtyNorm > 0 || qtyMaxi > 0
+  const chiaveBase = chiaveRiga(catId, item.name, 'base')
+  const base = cart[chiaveBase]
+  const qtyNorm = base?.qtyNorm ?? 0
+  const qtyMaxi = base?.qtyMaxi ?? 0
 
-  const update = (patch) =>
-    onUpdate(id, { qtyNorm, qtyMaxi, modifiche, nota, ...patch })
+  // Tutte le righe personalizzate di QUESTO prodotto, in aggiunta a quella base.
+  const righePersonalizzate = Object.entries(cart).filter(
+    ([chiave, e]) => e.catId === catId && e.itemName === item.name && chiave !== chiaveBase
+  )
+
+  const updateBase = (calcola) =>
+    onUpdate(chiaveBase, (e) => ({
+      catId,
+      itemName: item.name,
+      supplementi: [],
+      rimozioni: [],
+      nota: '',
+      ...calcola(e),
+    }))
 
   return (
-    <div className={`py-4 border-b border-cream last:border-0 ${isNote ? 'opacity-70 italic' : ''}`}>
+    <div className={`py-4 border-b border-cream last:border-0 ${isNote ? 'opacity-70' : ''}`}>
       <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline flex-wrap gap-x-1">
@@ -96,30 +212,21 @@ function MenuItem({ item, catId, cartEntry, onUpdate }) {
         </div>
 
         <div className="flex-shrink-0 flex flex-col items-end gap-2">
-          {!hasNumericPrice && !hasDescOnly && (
+          {!hasNumericPrice && (
             <PriceTag norm={item.norm} maxi={item.maxi} price={item.price} />
-          )}
-
-          {hasDescOnly && (
-            <QtyControl
-              qty={qtyNorm}
-              onInc={() => update({ qtyNorm: qtyNorm + 1 })}
-              onDec={() => update({ qtyNorm: Math.max(0, qtyNorm - 1) })}
-              label={item.name}
-            />
           )}
 
           {hasNumericPrice && !isNote && (
             <>
-              {/* Riga Normale */}
+              {/* Riga Normale — invariata: è l'ordine del prodotto senza aggiunte */}
               <div className="flex items-center gap-2">
                 <span className="font-body text-xs text-ink-muted text-right whitespace-nowrap">
                   Norm {fmtPrice(item.norm)}
                 </span>
                 <QtyControl
                   qty={qtyNorm}
-                  onInc={() => update({ qtyNorm: qtyNorm + 1 })}
-                  onDec={() => update({ qtyNorm: Math.max(0, qtyNorm - 1) })}
+                  onInc={() => updateBase((e) => ({ qtyNorm: e.qtyNorm + 1 }))}
+                  onDec={() => updateBase((e) => ({ qtyNorm: Math.max(0, e.qtyNorm - 1) }))}
                   label={`${item.name} normale`}
                 />
               </div>
@@ -132,40 +239,209 @@ function MenuItem({ item, catId, cartEntry, onUpdate }) {
                   </span>
                   <QtyControl
                     qty={qtyMaxi}
-                    onInc={() => update({ qtyMaxi: qtyMaxi + 1 })}
-                    onDec={() => update({ qtyMaxi: Math.max(0, qtyMaxi - 1) })}
+                    onInc={() => updateBase((e) => ({ qtyMaxi: e.qtyMaxi + 1 }))}
+                    onDec={() => updateBase((e) => ({ qtyMaxi: Math.max(0, e.qtyMaxi - 1) }))}
                     label={`${item.name} maxi`}
                   />
                 </div>
+              )}
+
+              {personalizzabile && (
+                <button
+                  onClick={() => onPersonalizza({ item, catId })}
+                  className="font-body text-xs font-semibold text-tomato hover:text-tomato-dark underline underline-offset-2 transition-colors"
+                >
+                  + Personalizza
+                </button>
               )}
             </>
           )}
         </div>
       </div>
 
-      {(hasNumericPrice || hasDescOnly) && !isNote && hasAny && item.allowCustomization !== false && (
-        <div className="mt-3 space-y-2">
-          <input
-            type="text"
-            placeholder="Modifica ingredienti (es. senza cipolla)"
-            value={modifiche}
-            onChange={(e) => update({ modifiche: e.target.value })}
-            className="w-full text-xs font-body border border-cream rounded-lg px-3 py-1.5 bg-cream placeholder:text-ink-faint text-ink focus:outline-none focus:border-tomato"
-          />
-          <input
-            type="text"
-            placeholder="Nota (es. ben cotta)"
-            value={nota}
-            onChange={(e) => update({ nota: e.target.value })}
-            className="w-full text-xs font-body border border-cream rounded-lg px-3 py-1.5 bg-cream placeholder:text-ink-faint text-ink focus:outline-none focus:border-tomato"
-          />
-        </div>
-      )}
+      {righePersonalizzate.map(([chiave, entry]) => (
+        <RigaPersonalizzata
+          key={chiave}
+          chiave={chiave}
+          entry={entry}
+          item={item}
+          onUpdate={onUpdate}
+        />
+      ))}
     </div>
   )
 }
 
-function CategorySection({ category, isActive, onClick, cart, onUpdate }) {
+const inputCls = 'w-full font-body text-sm border border-cream rounded-lg p-3 text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors'
+const labelCls = 'block font-body text-xs font-semibold text-ink-muted uppercase tracking-wide mb-1'
+
+function ModalePersonalizza({ item, catId, onChiudi, onConferma }) {
+  // Il pannello entra con una TRANSIZIONE su classe, non con una keyframe che
+  // parte da fuori schermo: se l'animazione non parte (motore fermo, contesto
+  // che non anima), la classe passa comunque a `translate-y-0` e il pannello
+  // resta al suo posto. Con una keyframe, invece, resterebbe sotto il bordo
+  // dello schermo e il carrello sembrerebbe rotto.
+  const [entrato, setEntrato] = useState(false)
+  useEffect(() => {
+    setEntrato(true)
+  }, [])
+
+  const [supplementiScelti, setSupplementiScelti] = useState([])
+  const [rimozioniScelte, setRimozioniScelte] = useState([])
+  const [nota, setNota] = useState('')
+  const [qtyNorm, setQtyNorm] = useState(1)
+  const [qtyMaxi, setQtyMaxi] = useState(0)
+
+  const hasMaxi = typeof item.maxi === 'number' && item.maxi !== null
+  const prezzoNorm = (item.norm ?? 0) + totaleSupplementi(supplementiScelti, 'norm')
+  const prezzoMaxi = hasMaxi ? item.maxi + totaleSupplementi(supplementiScelti, 'maxi') : 0
+  const totale = prezzoNorm * qtyNorm + prezzoMaxi * qtyMaxi
+  const valido = qtyNorm > 0 || qtyMaxi > 0
+
+  const alterna = (elenco, setElenco, id) =>
+    setElenco(elenco.includes(id) ? elenco.filter((x) => x !== id) : [...elenco, id])
+
+  const conferma = () => {
+    if (!valido) return
+    onConferma({
+      catId,
+      item,
+      supplementi: supplementiScelti,
+      rimozioni: rimozioniScelte,
+      nota,
+      qtyNorm,
+      qtyMaxi,
+    })
+  }
+
+  const chipCls = (attivo) =>
+    `px-3 py-1.5 rounded-full border-2 font-body text-xs font-semibold transition-colors ${
+      attivo ? 'bg-tomato border-tomato text-white' : 'border-cream text-ink hover:border-tomato'
+    }`
+
+  return (
+    // Su mobile il pannello sale dal basso (items-end + angoli arrotondati solo
+    // in alto); da sm in su torna una finestra centrata.
+    <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center">
+      <div className="absolute inset-0 bg-ink/60" onClick={onChiudi} />
+
+      <div
+        className={`relative w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[88vh] transform transition-transform duration-200 ease-out motion-reduce:transition-none sm:translate-y-0 ${
+          entrato ? 'translate-y-0' : 'translate-y-full'
+        }`}
+      >
+        <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-4 border-b border-cream flex-shrink-0">
+          <div className="min-w-0">
+            <h3 className="font-heading text-xl text-ink">Personalizza</h3>
+            <p className="font-body text-sm text-ink-muted truncate">{item.name}</p>
+          </div>
+          <button
+            onClick={onChiudi}
+            aria-label="Chiudi"
+            className="text-ink-faint hover:text-ink transition-colors flex-shrink-0"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="overflow-y-auto px-6 py-5 space-y-5">
+          <div>
+            <p className={labelCls}>Aggiungi</p>
+            <div className="flex flex-wrap gap-2">
+              {tuttiSupplementi.map((sup) => (
+                <button
+                  key={sup.id}
+                  onClick={() => alterna(supplementiScelti, setSupplementiScelti, sup.id)}
+                  className={chipCls(supplementiScelti.includes(sup.id))}
+                >
+                  {sup.nome}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className={labelCls}>Togli</p>
+            <div className="flex flex-wrap gap-2">
+              {tutteRimozioni.map((rim) => (
+                <button
+                  key={rim.id}
+                  onClick={() => alterna(rimozioniScelte, setRimozioniScelte, rim.id)}
+                  className={chipCls(rimozioniScelte.includes(rim.id))}
+                >
+                  {rim.nome}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="nota-personalizzazione" className={labelCls}>
+              Nota
+            </label>
+            <input
+              id="nota-personalizzazione"
+              type="text"
+              value={nota}
+              onChange={(e) => setNota(e.target.value)}
+              placeholder="es. ben cotta, poco sale"
+              className={inputCls}
+            />
+          </div>
+
+          <div className="border-t border-cream pt-4 space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <span className="font-body text-sm text-ink-muted">
+                Normale {fmtPrice(prezzoNorm)}
+              </span>
+              <QtyControl
+                qty={qtyNorm}
+                onInc={() => setQtyNorm((q) => q + 1)}
+                onDec={() => setQtyNorm((q) => Math.max(0, q - 1))}
+                label={`${item.name} normale personalizzata`}
+              />
+            </div>
+            {hasMaxi && (
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-body text-sm text-ink-muted">
+                  Maxi {fmtPrice(prezzoMaxi)}
+                </span>
+                <QtyControl
+                  qty={qtyMaxi}
+                  onInc={() => setQtyMaxi((q) => q + 1)}
+                  onDec={() => setQtyMaxi((q) => Math.max(0, q - 1))}
+                  label={`${item.name} maxi personalizzata`}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="px-6 py-4 border-t border-cream flex-shrink-0">
+          <div className="flex items-center justify-between mb-3">
+            <span className="font-body text-sm font-semibold text-ink">Totale</span>
+            <span className="font-heading text-xl text-tomato">{fmtPrice(totale)}</span>
+          </div>
+          <button
+            onClick={conferma}
+            disabled={!valido}
+            className={`w-full font-semibold py-3 rounded-full transition-colors ${
+              valido
+                ? 'bg-tomato hover:bg-tomato-dark text-white'
+                : 'bg-tomato text-white opacity-50 cursor-not-allowed'
+            }`}
+          >
+            Aggiungi all'ordine
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CategorySection({ category, isActive, onClick, cart, onUpdate, onPersonalizza }) {
   const domId = `categoria-${category.label
     .toLowerCase()
     .replace(/['']/g, '-')
@@ -220,8 +496,9 @@ function CategorySection({ category, isActive, onClick, cart, onUpdate }) {
               key={item.name}
               item={item}
               catId={category.id}
-              cartEntry={cart[`${category.id}::${item.name}`]}
+              cart={cart}
               onUpdate={onUpdate}
+              onPersonalizza={onPersonalizza}
             />
           ))}
         </div>
@@ -236,8 +513,6 @@ const WaIcon = () => (
   </svg>
 )
 
-const inputCls = 'w-full font-body text-sm border border-cream rounded-lg p-3 text-ink placeholder:text-ink-faint focus:outline-none focus:border-tomato transition-colors'
-const labelCls = 'block font-body text-xs font-semibold text-ink-muted uppercase tracking-wide mb-1'
 
 function CartPanel({ cartItems, totalPrice, onClose }) {
   const [sedeModal, setSedeModal] = useState(false)
@@ -265,12 +540,15 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
     righe.push(`Pagamento: ${pagamento === 'carta' ? 'Carta - il fattorino porterà il POS' : 'Contanti'}`)
     righe.push('')
     righe.push('Ordine:')
-    cartItems.forEach(({ item, qty, formato, prezzo, modifiche, nota }) => {
+    cartItems.forEach(({ item, qty, formato, prezzo, supplementi, rimozioni, nota }) => {
       const hasMaxi = item.maxi !== null && item.maxi !== undefined
       let riga = `- ${qty}x ${item.name}`
       if (hasMaxi) riga += ` (${formato === 'maxi' ? 'Maxi' : 'Normale'})`
       if (prezzo > 0) riga += ` — ${fmtPrice(prezzo * qty)}`
-      if (modifiche) riga += `\n  Modifiche: ${modifiche}`
+      const agg = nomiSupplementi(supplementi)
+      const via = nomiRimozioni(rimozioni)
+      if (agg.length) riga += `\n  Aggiunte: ${agg.join(', ')}`
+      if (via.length) riga += `\n  Senza: ${via.join(', ')}`
       if (nota) riga += `\n  Note: ${nota}`
       righe.push(riga)
     })
@@ -300,7 +578,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-            {cartItems.map(({ id, item, qty, formato, prezzo, modifiche, nota }) => {
+            {cartItems.map(({ id, item, qty, formato, prezzo, supplementi, rimozioni, nota }) => {
               const hasMaxi = item.maxi !== null && item.maxi !== undefined
               return (
                 <div key={id} className="border-b border-cream pb-4 last:border-0 last:pb-0">
@@ -314,9 +592,14 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                           </span>
                         )}
                       </p>
-                      {modifiche && (
+                      {nomiSupplementi(supplementi).length > 0 && (
                         <p className="font-body text-xs text-ink-faint mt-0.5">
-                          Modifiche: {modifiche}
+                          Aggiunte: {nomiSupplementi(supplementi).join(', ')}
+                        </p>
+                      )}
+                      {nomiRimozioni(rimozioni).length > 0 && (
+                        <p className="font-body text-xs text-ink-faint mt-0.5">
+                          Senza: {nomiRimozioni(rimozioni).join(', ')}
                         </p>
                       )}
                       {nota && (
@@ -528,6 +811,7 @@ export default function Menu({ onCartOpenChange }) {
   const [activeId, setActiveId] = useState('autore')
   const [cart, setCart] = useState({})
   const [showCart, setShowCart] = useState(false)
+  const [daPersonalizzare, setDaPersonalizzare] = useState(null)
 
   useEffect(() => {
     onCartOpenChange?.(showCart)
@@ -535,49 +819,92 @@ export default function Menu({ onCartOpenChange }) {
 
   const toggle = (id) => setActiveId((prev) => (prev === id ? null : id))
 
-  const updateCart = (id, updates) => {
+  // `updates` può essere un oggetto oppure una funzione della voce corrente.
+  // La forma funzionale serve ai contatori: due tap ravvicinati sul "+" cadono
+  // nello stesso frame e, leggendo la quantità dalla closure di render,
+  // vedrebbero entrambi il valore vecchio perdendo un incremento.
+  const updateCart = (chiave, updates) => {
     setCart((prev) => {
-      const entry = prev[id] ?? { qtyNorm: 0, qtyMaxi: 0, modifiche: '', nota: '' }
-      const next = { ...entry, ...updates }
+      const entry = prev[chiave] ?? {
+        qtyNorm: 0,
+        qtyMaxi: 0,
+        supplementi: [],
+        rimozioni: [],
+        nota: '',
+      }
+      const patch = typeof updates === 'function' ? updates(entry) : updates
+      const next = { ...entry, ...patch }
       next.qtyNorm = Math.max(0, next.qtyNorm ?? 0)
       next.qtyMaxi = Math.max(0, next.qtyMaxi ?? 0)
       if (next.qtyNorm === 0 && next.qtyMaxi === 0) {
-        const { [id]: _removed, ...rest } = prev
-        return rest
+        const resto = { ...prev }
+        delete resto[chiave]
+        return resto
       }
-      return { ...prev, [id]: next }
+      return { ...prev, [chiave]: next }
     })
   }
 
-  const cartItems = Object.entries(cart).flatMap(([id, entry]) => {
-    const [catId, itemName] = id.split('::')
-    const cat = menuCategories.find((c) => c.id === catId)
-    const item = cat?.items.find((i) => i.name === itemName)
+  // Conferma del modale: la firma decide se questa personalizzazione è nuova
+  // (riga a sé) o identica a una già presente (quantità che si sommano).
+  const aggiungiPersonalizzazione = ({ catId, item, supplementi, rimozioni, nota, qtyNorm, qtyMaxi }) => {
+    const chiave = chiaveRiga(
+      catId,
+      item.name,
+      firmaPersonalizzazione({ supplementi, rimozioni, nota })
+    )
+    setCart((prev) => {
+      const esistente = prev[chiave]
+      return {
+        ...prev,
+        [chiave]: {
+          catId,
+          itemName: item.name,
+          supplementi,
+          rimozioni,
+          // Se la riga esiste già la nota è, per costruzione della firma, la
+          // stessa a meno di spazi e maiuscole: si tiene quella già mostrata.
+          nota: esistente?.nota ?? nota,
+          qtyNorm: (esistente?.qtyNorm ?? 0) + qtyNorm,
+          qtyMaxi: (esistente?.qtyMaxi ?? 0) + qtyMaxi,
+        },
+      }
+    })
+    setDaPersonalizzare(null)
+  }
+
+  // catId e itemName vengono dalla voce, non dal parsing della chiave: un nome
+  // prodotto o una nota che contenga '::' non rompono più niente.
+  const cartItems = Object.entries(cart).flatMap(([chiave, entry]) => {
+    const cat = menuCategories.find((c) => c.id === entry.catId)
+    const item = cat?.items.find((i) => i.name === entry.itemName)
     if (!item) return []
-    const results = []
+    const comuni = {
+      item,
+      supplementi: entry.supplementi ?? [],
+      rimozioni: entry.rimozioni ?? [],
+      nota: entry.nota ?? '',
+    }
+    const righe = []
     if (entry.qtyNorm > 0) {
-      results.push({
-        id: `${id}::norm`,
-        item,
+      righe.push({
+        ...comuni,
+        id: `${chiave}::norm`,
         qty: entry.qtyNorm,
         formato: 'norm',
-        prezzo: item.norm ?? 0,
-        modifiche: entry.modifiche,
-        nota: entry.nota,
+        prezzo: (item.norm ?? 0) + totaleSupplementi(entry.supplementi, 'norm'),
       })
     }
     if (entry.qtyMaxi > 0 && item.maxi) {
-      results.push({
-        id: `${id}::maxi`,
-        item,
+      righe.push({
+        ...comuni,
+        id: `${chiave}::maxi`,
         qty: entry.qtyMaxi,
         formato: 'maxi',
-        prezzo: item.maxi,
-        modifiche: entry.modifiche,
-        nota: entry.nota,
+        prezzo: item.maxi + totaleSupplementi(entry.supplementi, 'maxi'),
       })
     }
-    return results
+    return righe
   })
 
   const totalQty = cartItems.reduce((sum, e) => sum + e.qty, 0)
@@ -651,6 +978,7 @@ export default function Menu({ onCartOpenChange }) {
               onClick={() => toggle(cat.id)}
               cart={cart}
               onUpdate={updateCart}
+              onPersonalizza={setDaPersonalizzare}
             />
           ))}
         </div>
@@ -716,6 +1044,16 @@ export default function Menu({ onCartOpenChange }) {
             <span className="font-heading">{fmtPrice(totalPrice)}</span>
           </button>
         </div>
+      )}
+
+      {/* Modale personalizzazione */}
+      {daPersonalizzare && (
+        <ModalePersonalizza
+          item={daPersonalizzare.item}
+          catId={daPersonalizzare.catId}
+          onChiudi={() => setDaPersonalizzare(null)}
+          onConferma={aggiungiPersonalizzazione}
+        />
       )}
 
       {/* Cart Panel */}

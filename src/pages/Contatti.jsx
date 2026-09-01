@@ -100,7 +100,7 @@ export default function Contatti() {
             <p className="font-body text-tomato text-xs font-semibold uppercase tracking-[0.2em] mb-3">
               Indirizzo e orari
             </p>
-            <h2 className="font-heading text-4xl text-ink">Trovaci vicino a te</h2>
+            <h2 className="font-heading text-4xl text-ink">Come raggiungerci</h2>
           </div>
 
           <div className="flex flex-col gap-10">

@@ -56,7 +56,7 @@ export default function ChiSiamo() {
     <>
       <Helmet>
         <title>Chi Siamo – Pizzeria Europa | La Nostra Storia</title>
-        <meta name="description" content="La storia di Pizzeria Europa: passione per la pizza napoletana, forno a legna, ingredienti a km0 e tre sedi in provincia di Enna." />
+        <meta name="description" content="La storia di Pizzeria Europa: passione per la pizza napoletana, forno a legna, ingredienti a km0, a Piazza Armerina." />
         <meta property="og:title" content="Chi Siamo – Pizzeria Europa" />
         <meta property="og:description" content="La nostra storia, i nostri valori e la passione per la pizza artigianale." />
         <meta property="og:url" content="https://pizzeria-europa-site.vercel.app/chi-siamo" />
@@ -101,7 +101,7 @@ export default function ChiSiamo() {
                 come si fa in casa, con gli ingredienti giusti, i tempi giusti, il calore giusto.
               </p>
               <p className="font-body text-ink-muted leading-relaxed mb-4">
-                Tre sedi — Piazza Armerina, Barrafranca, Aidone — unite dalla stessa filosofia:
+                A Piazza Armerina, una sola filosofia:
                 niente scorciatoie. Impasto lievitato naturalmente per 24–48 ore, farina
                 selezionata, cottura a legna. Ogni pizza esce dal forno come deve.
               </p>
@@ -226,7 +226,7 @@ export default function ChiSiamo() {
       <section className="relative py-20 text-center overflow-hidden">
         <img
           src={ordinazioni}
-          alt="Pizzeria Europa – vieni a trovarci nelle nostre sedi"
+          alt="Pizzeria Europa – vieni a trovarci a Piazza Armerina"
           className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
           loading="lazy"
         />
@@ -236,14 +236,14 @@ export default function ChiSiamo() {
             Vieni a trovarci
           </h2>
           <p className="font-body text-white/80 mb-10">
-            Tre sedi, una sola qualità. Siamo a Piazza Armerina, Barrafranca e Aidone.
+            Una sola qualità, ogni giorno. Ci trovi a Piazza Armerina.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contatti"
               className="bg-white text-tomato font-semibold px-8 py-4 rounded-full hover:bg-cream transition-colors"
             >
-              Scopri le sedi
+              Orari e indirizzo
             </Link>
             <Link
               to="/menu"

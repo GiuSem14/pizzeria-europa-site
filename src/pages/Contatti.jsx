@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { sediAttive, telHref, waHref } from '../data/sedi'
+import { sediAttive, sedeUnica, telHref, waHref } from '../data/sedi'
 import contatti from '../assets/contatti.webp'
 import OrariCard from '../components/OrariCard'
 
@@ -38,8 +38,10 @@ export default function Contatti() {
   const [errore, setErrore] = useState('')
 
   const handleInvia = () => {
-    // Blocca l'invio se manca la sede: mostra un messaggio invece di aprire WhatsApp
-    const selectedSede = sede ? sediAttive.find((s) => s.nome === sede) : null
+    // Con una sola sede attiva la destinazione è implicita: nessuna scelta da
+    // fare, quindi nessuna validazione. In configurazione multi-sede la sede
+    // resta obbligatoria e il controllo torna attivo senza altre modifiche.
+    const selectedSede = sedeUnica ?? (sede ? sediAttive.find((s) => s.nome === sede) : null)
     if (!selectedSede) {
       setErrore('Seleziona una sede prima di inviare il messaggio.')
       return
@@ -57,15 +59,17 @@ export default function Contatti() {
 
   // Sedi di riferimento per i canali rapidi (derivate da sedi.js, nessun dato hardcoded)
   const sedePrincipale = sediAttive[0]
-  const sedeBarrafranca = sediAttive.find((s) => s.id === 'barrafranca') ?? sedePrincipale
+  // Sede a cui puntano i canali rapidi WhatsApp. Storicamente era Barrafranca;
+  // con una sola sede attiva ricade automaticamente su quella.
+  const sedeWhatsApp = sediAttive.find((s) => s.id === 'barrafranca') ?? sedePrincipale
 
   return (
     <>
       <Helmet>
-        <title>Contatti e Sedi – Pizzeria Europa | Piazza Armerina, Barrafranca, Aidone</title>
-        <meta name="description" content="Trova Pizzeria Europa a Piazza Armerina, Barrafranca e Aidone. Orari, indirizzi, telefono e WhatsApp per prenotazioni e ordini." />
+        <title>Contatti – Pizzeria Europa | Piazza Armerina (EN)</title>
+        <meta name="description" content="Trova Pizzeria Europa a Piazza Armerina. Orari, indirizzo, telefono e WhatsApp per prenotazioni e ordini." />
         <meta property="og:title" content="Contatti – Pizzeria Europa" />
-        <meta property="og:description" content="Tre sedi in provincia di Enna. Prenota un tavolo o ordina via WhatsApp." />
+        <meta property="og:description" content="A Piazza Armerina, in provincia di Enna. Prenota un tavolo o ordina via WhatsApp." />
         <meta property="og:url" content="https://pizzeria-europa-site.vercel.app/contatti" />
       </Helmet>
 
@@ -84,7 +88,7 @@ export default function Contatti() {
           </p>
           <h1 className="font-heading text-5xl text-cream-light mb-4">Contatti</h1>
           <p className="font-body text-cream/60 leading-relaxed">
-            Tre sedi a tua disposizione. Chiama, scrivi su WhatsApp o compila il modulo.
+            Siamo a Piazza Armerina. Chiama, scrivi su WhatsApp o compila il modulo.
           </p>
         </div>
       </section>
@@ -94,7 +98,7 @@ export default function Contatti() {
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
             <p className="font-body text-tomato text-xs font-semibold uppercase tracking-[0.2em] mb-3">
-              Le nostre sedi
+              Indirizzo e orari
             </p>
             <h2 className="font-heading text-4xl text-ink">Trovaci vicino a te</h2>
           </div>
@@ -205,7 +209,7 @@ export default function Contatti() {
             </a>
 
             <a
-              href={waHref(sedeBarrafranca.cellulare)}
+              href={waHref(sedeWhatsApp.cellulare)}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex flex-col items-center text-center p-7 bg-cream rounded-2xl hover:shadow-md transition-shadow"
@@ -216,7 +220,7 @@ export default function Contatti() {
                 </svg>
               </div>
               <h3 className="font-heading text-lg text-ink font-semibold mb-1">WhatsApp</h3>
-              <p className="font-body text-xs text-ink-muted">Sede {sedeBarrafranca.nome} — {sedeBarrafranca.cellulare}</p>
+              <p className="font-body text-xs text-ink-muted">Sede {sedeWhatsApp.nome} — {sedeWhatsApp.cellulare}</p>
             </a>
 
             <a
@@ -296,27 +300,29 @@ export default function Contatti() {
               />
             </div>
 
-            {/* Sede */}
-            <div>
-              <span className="block font-body text-sm font-medium text-ink mb-1.5">
-                Sede <span className="text-tomato">*</span>
-              </span>
-              <div className="flex gap-2">
-                {sediAttive.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => { setSede(s.nome); setErrore('') }}
-                    className={`flex-1 py-3 rounded-xl text-sm font-semibold font-body border-2 transition-colors ${
-                      sede === s.nome
-                        ? 'bg-tomato border-tomato text-white'
-                        : 'border-cream text-ink hover:border-tomato'
-                    }`}
-                  >
-                    {s.nome}
-                  </button>
-                ))}
+            {/* Sede — mostrata solo quando c'è più di una sede attiva */}
+            {!sedeUnica && (
+              <div>
+                <span className="block font-body text-sm font-medium text-ink mb-1.5">
+                  Sede <span className="text-tomato">*</span>
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {sediAttive.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => { setSede(s.nome); setErrore('') }}
+                      className={`flex-1 basis-32 py-3 rounded-xl text-sm font-semibold font-body border-2 transition-colors ${
+                        sede === s.nome
+                          ? 'bg-tomato border-tomato text-white'
+                          : 'border-cream text-ink hover:border-tomato'
+                      }`}
+                    >
+                      {s.nome}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Messaggio di errore */}
             {errore && (

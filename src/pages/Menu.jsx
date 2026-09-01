@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { menuCategories } from '../data/menu'
-import { sediAttive, telHref, waHref } from '../data/sedi'
+import { sediAttive, sedeUnica, telHref, waHref } from '../data/sedi'
 import pizze from '../assets/pizze.webp'
 import ordinazioni from '../assets/ordinazioni.webp'
 
@@ -343,7 +343,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
               onClick={() => setSedeModal(true)}
               className="w-full bg-tomato text-white font-semibold py-3.5 rounded-full hover:bg-tomato-dark transition-colors"
             >
-              Scegli sede e ordina →
+              Ordina su WhatsApp →
             </button>
           </div>
         </div>
@@ -469,7 +469,7 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
 
               <div className="border-t border-cream pt-4">
                 <p className="font-body text-sm font-semibold text-ink mb-3">
-                  Scegli la sede
+                  {sedeUnica ? 'Invia il tuo ordine' : 'Scegli la sede'}
                 </p>
                 {!formValid && (
                   <p className="font-body text-xs text-ink-faint mb-3">
@@ -477,25 +477,42 @@ function CartPanel({ cartItems, totalPrice, onClose }) {
                   </p>
                 )}
                 <div className="space-y-2">
-                  {sediAttive.map((s) => (
+                  {sedeUnica ? (
                     <a
-                      key={s.id}
-                      href={formValid ? waHref(s.whatsapp, buildMessage(s.nome)) : undefined}
+                      href={formValid ? waHref(sedeUnica.whatsapp, buildMessage(sedeUnica.nome)) : undefined}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={formValid ? onClose : (e) => e.preventDefault()}
-                      className={`flex items-center justify-between w-full px-5 py-4 rounded-xl border-2 transition-colors ${
+                      className={`flex items-center justify-center gap-2 w-full px-5 py-4 rounded-xl font-body font-semibold transition-colors ${
                         formValid
-                          ? 'border-cream hover:border-green-400 hover:bg-green-50 cursor-pointer'
-                          : 'border-cream opacity-50 cursor-not-allowed pointer-events-none'
+                          ? 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'
+                          : 'bg-green-600 text-white opacity-50 cursor-not-allowed pointer-events-none'
                       }`}
                     >
-                      <span className="font-body font-semibold text-ink">{s.nome}</span>
-                      <span className="text-green-600">
-                        <WaIcon />
-                      </span>
+                      <WaIcon />
+                      Invia ordine su WhatsApp
                     </a>
-                  ))}
+                  ) : (
+                    sediAttive.map((s) => (
+                      <a
+                        key={s.id}
+                        href={formValid ? waHref(s.whatsapp, buildMessage(s.nome)) : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={formValid ? onClose : (e) => e.preventDefault()}
+                        className={`flex items-center justify-between w-full px-5 py-4 rounded-xl border-2 transition-colors ${
+                          formValid
+                            ? 'border-cream hover:border-green-400 hover:bg-green-50 cursor-pointer'
+                            : 'border-cream opacity-50 cursor-not-allowed pointer-events-none'
+                        }`}
+                      >
+                        <span className="font-body font-semibold text-ink">{s.nome}</span>
+                        <span className="text-green-600">
+                          <WaIcon />
+                        </span>
+                      </a>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -664,7 +681,7 @@ export default function Menu({ onCartOpenChange }) {
             Pronto a ordinare?
           </h2>
           <p className="font-body text-white/80 mb-8">
-            Chiama la sede più vicina o scrivici su WhatsApp.
+            Chiamaci o scrivici su WhatsApp.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

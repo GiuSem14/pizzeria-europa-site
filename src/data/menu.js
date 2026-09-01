@@ -139,4 +139,16 @@ export const menuCategories = [
   },
 ]
 
+// Categorie che contano come "pizza" nella statistica in home:
+//   - autore, storiche, tradizione -> pizze al forno
+//   - pizzicotti                   -> pizza fritta farcita
+// Restano fuori panini, fritture e bevande.
+// Le voci con `note: true` sono supplementi e non pizze (es. "Bordo ripieno"
+// nelle Pizze d'Autore), quindi vengono escluse dal conteggio.
+const CATEGORIE_PIZZE = ['autore', 'storiche', 'tradizione', 'pizzicotti']
+
+export const totalePizze = menuCategories
+  .filter((c) => CATEGORIE_PIZZE.includes(c.id))
+  .reduce((tot, c) => tot + c.items.filter((i) => !i.note).length, 0)
+
 // I dati delle sedi sono ora centralizzati in src/data/sedi.js

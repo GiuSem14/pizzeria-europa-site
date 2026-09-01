@@ -46,7 +46,7 @@ export default function Footer() {
         {/* Sedi */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-cream/40 mb-4">
-            Le Nostre Sedi
+            Dove Siamo
           </p>
           <ul className="space-y-4">
             {sediAttive.map((s) => {

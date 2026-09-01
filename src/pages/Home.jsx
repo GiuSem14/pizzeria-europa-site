@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { Truck, ShoppingBag, UtensilsCrossed, Flame, Leaf, Wheat, Clock } from 'lucide-react'
-import { sediAttive, telHref, waHref } from '../data/sedi'
+import { sediAttive, sedeUnica, telE164, telHref, waHref } from '../data/sedi'
+import { totalePizze } from '../data/menu'
 import imgDelivery from '../assets/delivery.webp'
 import imgAsporto from '../assets/asporto.webp'
 import imgPizzeria from '../assets/pizzeria.webp'
@@ -20,7 +21,7 @@ const services = [
   {
     Icon: Truck,
     title: 'Consegna a domicilio',
-    desc: 'Portiamo la pizza direttamente a casa tua nelle zone servite da ciascuna sede.',
+    desc: 'Portiamo la pizza direttamente a casa tua.',
     img: imgDelivery,
   },
   {
@@ -115,19 +116,79 @@ const featuredPizzas = [
   },
 ]
 
+// Classi Tailwind letterali: il JIT non genera nomi di classe costruiti a
+// runtime, quindi le varianti vanno scritte per esteso. Con una sola sede la
+// card resta centrata su una larghezza leggibile invece di occupare un terzo
+// di griglia lasciando due colonne vuote.
+const GRID_SEDI = {
+  1: 'grid-cols-1 max-w-xl mx-auto',
+  2: 'grid-cols-1 md:grid-cols-2',
+  3: 'grid-cols-1 md:grid-cols-3',
+}
+
+const GIORNI_SCHEMA = {
+  'Lunedì': 'Monday',
+  'Martedì': 'Tuesday',
+  'Mercoledì': 'Wednesday',
+  'Giovedì': 'Thursday',
+  'Venerdì': 'Friday',
+  'Sabato': 'Saturday',
+  'Domenica': 'Sunday',
+}
+
+// Traduce gli orari di una sede (fonte: src/data/sedi.js) nel formato
+// schema.org, raggruppando i giorni che condividono la stessa fascia oraria.
+// I giorni di chiusura (`orario: null`) vengono semplicemente omessi.
+function buildOpeningHours(orari) {
+  const perFascia = new Map()
+  orari.forEach(({ giorno, orario }) => {
+    if (!orario) return
+    const giornoEn = GIORNI_SCHEMA[giorno]
+    if (!giornoEn) return
+    if (!perFascia.has(orario)) perFascia.set(orario, [])
+    perFascia.get(orario).push(giornoEn)
+  })
+  return [...perFascia.entries()].map(([orario, giorni]) => {
+    const [opens, closes] = orario.split(/[–-]/).map((t) => t.trim())
+    return {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: giorni,
+      opens,
+      closes,
+    }
+  })
+}
+
+// Giorni di apertura effettivi su giorni dichiarati (es. "7/7", "6/7").
+// Deriva dagli orari in sedi.js: se una sede introduce un giorno di chiusura
+// il valore si aggiorna da solo.
+const giorniApertura = (orari) =>
+  `${orari.filter((g) => g.orario).length}/${orari.length}`
+
+// Sede a cui si riferiscono i dati strutturati della home. Con una sola sede
+// attiva è `sedeUnica`; in configurazione multi-sede resta la prima attiva,
+// esattamente come prima.
+const sedeSchema = sedeUnica ?? sediAttive[0]
+
 export default function Home() {
   const prenotaWhatsApp = () => {
+    // Con una sola sede attiva la sede è implicita e viene solo dichiarata;
+    // in configurazione multi-sede si chiede quale si preferisce, elencando
+    // le sedi attive (nessun nome di città hardcoded nel messaggio).
+    const rigaSede = sedeUnica
+      ? `Sede: ${sedeUnica.nome}`
+      : `Sede preferita (${sediAttive.map((s) => s.nome).join(' / ')}): `
     const msg = encodeURIComponent(
-      `Ciao Pizzeria Europa! Vorrei prenotare un tavolo.\n\nNome: \nNumero di persone: \nData: \nOrario: \nSede preferita (Piazza Armerina / Barrafranca / Aidone): \nNote (es. occasione speciale, esigenze alimentari): \n\nGrazie!`
+      `Ciao Pizzeria Europa! Vorrei prenotare un tavolo.\n\nNome: \nNumero di persone: \nData: \nOrario: \n${rigaSede}\nNote (es. occasione speciale, esigenze alimentari): \n\nGrazie!`
     )
-    window.open(waHref(sediAttive[0].whatsapp, msg), '_blank')
+    window.open(waHref((sedeUnica ?? sediAttive[0]).whatsapp, msg), '_blank')
   }
 
   return (
     <>
       <Helmet>
         <title>Pizzeria Europa – Pizza Artigianale in Provincia di Enna, Sicilia</title>
-        <meta name="description" content="Pizzeria Europa: pizza napoletana con lievitazione naturale 24-48h, cottura a legna e ingredienti selezionati. Tre sedi a Piazza Armerina, Barrafranca e Aidone." />
+        <meta name="description" content="Pizzeria Europa: pizza napoletana con lievitazione naturale 24-48h, cottura a legna e ingredienti selezionati. A Piazza Armerina, provincia di Enna." />
         <meta property="og:title" content="Pizzeria Europa – Pizza Artigianale in Sicilia" />
         <meta property="og:description" content="Pizza napoletana con forno a legna e ingredienti freschi. Ordina online via WhatsApp." />
         <meta property="og:type" content="restaurant" />
@@ -144,37 +205,28 @@ export default function Home() {
           "image": "https://pizzeria-europa-site.vercel.app/og-image.jpg",
           "priceRange": "€€",
           "servesCuisine": "Pizza Napoletana",
-          "telephone": "+390935182485",
-          "email": "flaviomira88@gmail.com",
+          "telephone": telE164(sedeSchema.telefono),
+          "email": sedeSchema.email,
           "url": "https://pizzeria-europa-site.vercel.app",
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "Piazza Giorgio Boris Giuliano 33",
-            "addressLocality": "Piazza Armerina",
-            "postalCode": "94015",
+            "streetAddress": sedeSchema.indirizzo,
+            "addressLocality": sedeSchema.nome,
+            "postalCode": sedeSchema.cap,
             "addressCountry": "IT"
           },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 37.3833,
-            "longitude": 14.3667
-          },
-          "openingHoursSpecification": [
-            {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday"],
-              "opens": "19:00",
-              "closes": "23:00"
-            },
-            {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Wednesday","Thursday","Friday","Saturday","Sunday"],
-              "opens": "12:00",
-              "closes": "23:30"
+          ...(sedeSchema.coordinate && {
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": sedeSchema.coordinate.lat,
+              "longitude": sedeSchema.coordinate.lng
             }
-          ],
+          }),
+          "openingHoursSpecification": buildOpeningHours(sedeSchema.orari),
           "menu": "https://pizzeria-europa-site.vercel.app/menu",
-          "hasMap": "https://maps.google.com/?q=Piazza+Giorgio+Boris+Giuliano+33+Piazza+Armerina"
+          "hasMap": `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${sedeSchema.indirizzo}, ${sedeSchema.citta}`
+          )}`
         })}</script>
       </Helmet>
 
@@ -201,7 +253,7 @@ export default function Home() {
           </h1>
           <p className="font-body text-white/75 text-lg max-w-lg mx-auto mb-10 leading-relaxed">
             Lievitazione naturale 24–48 ore, cottura a legna, materie prime selezionate.
-            Tre sedi in provincia di Enna per portarti il meglio della tradizione.
+            Nel cuore della provincia di Enna, per portarti il meglio della tradizione.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -220,7 +272,7 @@ export default function Home() {
               to="/contatti"
               className="border-2 border-cream/40 text-cream-light hover:border-cream hover:text-white font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              Le Nostre Sedi
+              Dove Siamo
             </Link>
             <Link
               to="/contatti"
@@ -445,8 +497,8 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               {[
                 { value: '24–48h', label: 'Lievitazione naturale' },
-                { value: '3', label: 'Sedi in provincia di Enna' },
-                { value: '60+', label: 'Pizze in menù' },
+                { value: giorniApertura(sedeSchema.orari), label: 'Giorni di apertura' },
+                { value: totalePizze, label: 'Pizze in menù' },
                 { value: '100%', label: 'Ingredienti selezionati' },
               ].map(({ value, label }) => (
                 <div
@@ -469,9 +521,9 @@ export default function Home() {
             <p className="font-body text-tomato text-xs font-semibold uppercase tracking-[0.2em] mb-3">
               Dove trovarci
             </p>
-            <h2 className="font-heading text-4xl text-ink">Tre sedi, un'unica qualità</h2>
+            <h2 className="font-heading text-4xl text-ink">Ci trovi qui</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className={`grid gap-6 ${GRID_SEDI[sediAttive.length] ?? GRID_SEDI[3]}`}>
             {sediAttive.map((s) => (
               <div key={s.id} className="bg-cream-light rounded-2xl p-7">
                 <h3 className="font-heading text-xl text-ink font-semibold mb-1">{s.nome}</h3>
@@ -522,18 +574,39 @@ export default function Home() {
             Ordina adesso, vieni a trovarci, o contattaci per un evento su misura.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('openCallPanel'))}
-              className="bg-white text-tomato font-semibold px-8 py-4 rounded-full hover:bg-cream transition-colors"
-            >
-              Chiama ora
-            </button>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('openWAPanel'))}
-              className="border-2 border-white text-white font-semibold px-8 py-4 rounded-full hover:bg-white hover:text-tomato transition-colors"
-            >
-              Scrivici
-            </button>
+            {sedeUnica ? (
+              <>
+                <a
+                  href={telHref(sedeUnica.telefono)}
+                  className="bg-white text-tomato font-semibold px-8 py-4 rounded-full hover:bg-cream transition-colors"
+                >
+                  Chiama ora
+                </a>
+                <a
+                  href={waHref(sedeUnica.whatsapp)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-2 border-white text-white font-semibold px-8 py-4 rounded-full hover:bg-white hover:text-tomato transition-colors"
+                >
+                  Scrivici
+                </a>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('openCallPanel'))}
+                  className="bg-white text-tomato font-semibold px-8 py-4 rounded-full hover:bg-cream transition-colors"
+                >
+                  Chiama ora
+                </button>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('openWAPanel'))}
+                  className="border-2 border-white text-white font-semibold px-8 py-4 rounded-full hover:bg-white hover:text-tomato transition-colors"
+                >
+                  Scrivici
+                </button>
+              </>
+            )}
           </div>
         </div>
       </section>

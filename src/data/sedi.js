@@ -21,9 +21,12 @@ export const sedi = [
   {
     id: 'piazza-armerina',
     nome: 'Piazza Armerina',
+    // DA VERIFICARE con il cliente: civico 18 o 33? Il vecchio JSON-LD della
+    // home diceva 33. Se cambia, aggiornare anche `urlMappa` qui sotto.
     indirizzo: 'Piazza Giorgio Boris Giuliano 18', // TODO CLIENTE
     cap: '94015', // TODO CLIENTE
     citta: 'Piazza Armerina (EN)', // TODO CLIENTE
+    // DA VERIFICARE con il cliente: 6 o 7 cifre dopo lo 0935?
     telefono: '0935 182 2485', // fisso (display) // TODO CLIENTE
     cellulare: '380 2644694', // cellulare mostrato sulle schede // TODO CLIENTE
     whatsapp: '380 2644694', // destinazione ordini/messaggi (uguale per tutte) // TODO CLIENTE
@@ -31,6 +34,8 @@ export const sedi = [
     coordinate: { lat: 37.3833, lng: 14.3667 }, // TODO CLIENTE
     urlMappa:
       'https://maps.google.com/maps?q=Piazza+Giorgio+Boris+Giuliano+18,+94015+Piazza+Armerina,+EN,+Italy&output=embed&hl=it', // TODO CLIENTE
+    // DA VERIFICARE con il cliente: il vecchio JSON-LD della home dichiarava
+    // orari diversi (Lun 19:00-23:00, Mer-Dom 12:00-23:30, Mar assente).
     orari: [
       // TODO CLIENTE
       { giorno: 'Lunedì', orario: '17:00–23:30' },
@@ -66,7 +71,7 @@ export const sedi = [
       { giorno: 'Sabato', orario: '17:00–23:00' },
       { giorno: 'Domenica', orario: '17:00–23:00' },
     ],
-    attiva: true,
+    attiva: false,
   },
   {
     id: 'aidone',
@@ -91,15 +96,24 @@ export const sedi = [
       { giorno: 'Sabato', orario: '17:00–23:30' },
       { giorno: 'Domenica', orario: '17:00–23:00' },
     ],
-    attiva: true,
+    attiva: false,
   },
 ]
 
 // Solo le sedi attualmente attive (usare questa in tutta la UI).
 export const sediAttive = sedi.filter((s) => s.attiva)
 
+// Valorizzata SOLO quando esiste esattamente una sede attiva: in quel caso la UI
+// salta ogni selettore di sede e usa direttamente questo oggetto. Quando le sedi
+// attive tornano a essere due o più vale `null` e la UI riprende il
+// comportamento multi-sede senza altre modifiche al codice.
+export const sedeUnica = sediAttive.length === 1 ? sediAttive[0] : null
+
+// Numero in formato E.164 da un numero nazionale (es. "0935 182 2485" -> "+3909351822485").
+export const telE164 = (numero) => `+39${String(numero).replace(/\D/g, '')}`
+
 // Costruisce un link `tel:` pulito da un numero nazionale (es. "0935 182 2485").
-export const telHref = (numero) => `tel:+39${String(numero).replace(/\D/g, '')}`
+export const telHref = (numero) => `tel:${telE164(numero)}`
 
 // Cifre pronte per wa.me da un numero nazionale (es. "380 2644694" -> "393802644694").
 export const waNumero = (numero) => `39${String(numero).replace(/\D/g, '')}`

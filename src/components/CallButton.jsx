@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { PhoneCall } from 'lucide-react'
-import { sediAttive, telHref } from '../data/sedi'
+import { sediAttive, sedeUnica, telHref } from '../data/sedi'
 
 export default function CallButton({ isHidden = false }) {
   const [open, setOpen] = useState(false)
@@ -24,6 +24,20 @@ export default function CallButton({ isHidden = false }) {
   }, [open])
 
   if (isHidden) return null
+
+  // Con una sola sede attiva il pannello di scelta non ha senso: la cornetta
+  // compone direttamente il numero, senza passaggi intermedi.
+  if (sedeUnica) {
+    return (
+      <a
+        href={telHref(sedeUnica.telefono)}
+        aria-label={`Chiama Pizzeria Europa — ${sedeUnica.nome}`}
+        className="fixed bottom-36 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg bg-tomato hover:bg-tomato-dark hover:shadow-xl transition-all text-white"
+      >
+        <PhoneCall size={22} strokeWidth={2} />
+      </a>
+    )
+  }
 
   return (
     <div ref={containerRef} className="fixed bottom-36 right-6 z-50">

@@ -54,7 +54,7 @@ export default function OrariCard({ giorni }) {
                 {orario ? (
                   <span className="text-sm text-ink-muted">{orario}</span>
                 ) : (
-                  <span className="text-sm italic text-ink-faint">Chiuso</span>
+                  <span className="text-sm font-semibold text-tomato">Chiuso</span>
                 )}
               </div>
             </li>

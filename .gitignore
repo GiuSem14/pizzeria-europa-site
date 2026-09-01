@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Config locale del dev server usata dagli strumenti di anteprima
+.claude/launch.json

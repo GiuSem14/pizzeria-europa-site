@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { sediAttive, sedeUnica, telHref, waHref } from '../data/sedi'
 import contatti from '../assets/contatti.webp'
 import OrariCard from '../components/OrariCard'
+import MappaSede from '../components/MappaSede'
 
 // SVG path helpers
 const IconPin = () => (
@@ -165,17 +166,7 @@ export default function Contatti() {
                       </a>
 
                       {/* Embed mappa */}
-                      <iframe
-                        title={`Mappa sede ${s.nome}`}
-                        src={s.urlMappa}
-                        width="100%"
-                        height="220"
-                        style={{ border: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        className="w-full rounded-xl mt-auto"
-                      />
+                      <MappaSede sede={s} className="w-full rounded-xl mt-auto" />
                     </div>
 
                     {/* Colonna destra — orari */}
